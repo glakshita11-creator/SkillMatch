@@ -129,13 +129,18 @@ const SkillMatch = (function () {
 
             if (!user) {
                 linksHtml = `
-                    <li><a href="/opportunities.html" class="nav-link ${activePath === 'opportunities' ? 'active' : ''}">Browse Opportunities</a></li>
+                    <li><a href="/opportunities.html" class="nav-link ${activePath === 'opportunities' ? 'active' : ''}">Opportunities</a></li>
+                    <li><a href="/index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="/index.html#how-it-works" class="nav-link">How It Works</a></li>
+                    <li><a href="/index.html#eligibility-simulator" class="nav-link">Simulator</a></li>
+                    <li><a href="/index.html#faq" class="nav-link">FAQ</a></li>
                 `;
                 actionsHtml = `
-                    <a href="/login.html" class="btn btn-outline btn-sm">Log In</a>
-                    <a href="/register.html" class="btn btn-primary btn-sm">Student Sign Up</a>
+                    <a href="/login.html" class="btn btn-outline btn-sm">Sign In</a>
+                    <a href="/register.html" class="btn btn-primary btn-sm">Join as Student</a>
                 `;
             } else if (user.role === 'ROLE_STUDENT') {
+
                 linksHtml = `
                     <li><a href="/student-dashboard.html" class="nav-link ${activePath === 'dashboard' ? 'active' : ''}">Dashboard</a></li>
                     <li><a href="/opportunities.html" class="nav-link ${activePath === 'opportunities' ? 'active' : ''}">Opportunities</a></li>

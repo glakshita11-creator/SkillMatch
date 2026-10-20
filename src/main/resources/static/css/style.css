@@ -926,3 +926,341 @@ img {
     }
 }
 
+/* =============================================================================
+   Flagship Website Showcase Components
+   ============================================================================= */
+
+/* Hero Search Bar */
+.hero-search-box {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    margin-top: 1.75rem;
+    max-width: 540px;
+}
+
+.hero-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.75rem;
+    font-family: inherit;
+}
+
+.hero-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.hero-search-btn {
+    background: white;
+    color: var(--primary-800);
+    border: none;
+    font-weight: 700;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.hero-search-btn:hover {
+    background: #ede9fe;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Partner Logo Bar */
+.partner-strip {
+    background: var(--surface-0);
+    border-bottom: 1px solid var(--surface-200);
+    padding: 2rem 1.5rem;
+}
+
+.partner-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.partner-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--surface-500);
+    filter: grayscale(100%);
+    opacity: 0.65;
+    transition: var(--transition);
+}
+
+.partner-logo:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+    color: var(--primary-700);
+    transform: translateY(-2px);
+}
+
+/* How It Works Tabs */
+.workflow-tab-bar {
+    display: inline-flex;
+    background: var(--surface-100);
+    padding: 0.35rem;
+    border-radius: var(--radius-full);
+    gap: 0.25rem;
+    margin-bottom: 2.5rem;
+}
+
+.workflow-tab-btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius-full);
+    border: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: transparent;
+    color: var(--surface-500);
+    transition: var(--transition);
+}
+
+.workflow-tab-btn.active {
+    background: var(--primary-600);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Bento Features */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.bento-card {
+    background: var(--surface-0);
+    border: 1px solid var(--surface-200);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.bento-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-400);
+    box-shadow: var(--shadow-lg);
+}
+
+.bento-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-full);
+    background: var(--primary-50);
+    color: var(--primary-700);
+    margin-bottom: 1rem;
+}
+
+/* Interactive Eligibility Simulator */
+.calc-card {
+    background: linear-gradient(135deg, #1e1b4b 0%, #31104b 100%);
+    border-radius: var(--radius-xl);
+    color: white;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-xl);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.calc-input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #c4b5fd;
+    margin-bottom: 0.4rem;
+}
+
+.calc-input-group select,
+.calc-input-group input {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.95rem;
+    outline: none;
+    font-family: inherit;
+}
+
+.calc-input-group select option {
+    background: #1e1b4b;
+    color: white;
+}
+
+/* Testimonials */
+.testimonial-card {
+    background: var(--surface-0);
+    border: 1px solid var(--surface-200);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition);
+}
+
+.testimonial-card:hover {
+    border-color: var(--primary-300);
+    box-shadow: var(--shadow-md);
+}
+
+.avatar-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* FAQ Accordion */
+.faq-item {
+    border-bottom: 1px solid var(--surface-200);
+    padding: 1.25rem 0;
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--surface-900);
+    cursor: pointer;
+    user-select: none;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+    color: var(--surface-500);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 0.75rem;
+}
+
+.faq-icon {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg);
+}
+
+/* Floating Demo Tour Bar */
+.demo-tour-bar {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full);
+    padding: 0.5rem 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.demo-tour-bar:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.demo-chip {
+    padding: 0.35rem 0.85rem;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    text-decoration: none;
+}
+
+.demo-chip:hover {
+    background: var(--primary-600);
+    border-color: var(--primary-400);
+    transform: translateY(-1px);
+    color: white;
+}
+
+@media (max-width: 900px) {
+    .bento-grid {
+        grid-template-columns: 1fr;
+    }
+    .calc-card {
+        grid-template-columns: 1fr;
+    }
+    .hero-search-box {
+        flex-direction: column;
+    }
+    .hero-search-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .demo-tour-bar {
+        width: 90%;
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: var(--radius-lg);
+    }
+}
+
+
