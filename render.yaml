@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: skillmatch
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /index.html
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev-h2

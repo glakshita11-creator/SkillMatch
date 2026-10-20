@@ -1,0 +1,7 @@
+target/
+.git/
+.vscode/
+*.cmd
+test_all_features.ps1
+uploads/
+data/

@@ -195,9 +195,31 @@ const SkillMatch = (function () {
                     <div class="nav-actions">
                         ${actionsHtml}
                     </div>
+                    <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle navigation menu" onclick="SkillMatch.toggleMobileMenu()">
+                        <span class="hamburger-bar"></span>
+                        <span class="hamburger-bar"></span>
+                        <span class="hamburger-bar"></span>
+                    </button>
+                </div>
+                <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+                    <ul class="mobile-nav-links">
+                        ${linksHtml}
+                    </ul>
+                    <div class="mobile-nav-actions">
+                        ${actionsHtml}
+                    </div>
                 </div>
             `;
         });
+    }
+
+    function toggleMobileMenu() {
+        const drawer = document.getElementById('mobile-nav-drawer');
+        const btn = document.getElementById('mobile-menu-btn');
+        if (drawer && btn) {
+            drawer.classList.toggle('open');
+            btn.classList.toggle('open');
+        }
     }
 
     function showToast(message, type = 'info') {
@@ -306,6 +328,7 @@ const SkillMatch = (function () {
         logout,
         requireAuth,
         initNavbar,
+        toggleMobileMenu,
         showToast,
         showConfirm,
         formatStatusBadge,

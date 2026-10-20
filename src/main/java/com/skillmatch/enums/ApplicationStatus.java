@@ -39,11 +39,12 @@ public enum ApplicationStatus {
             return List.of(APPLIED);
         }
         return switch (current) {
-            case APPLIED -> List.of(UNDER_REVIEW, SHORTLISTED, REJECTED);
-            case UNDER_REVIEW -> List.of(SHORTLISTED, REJECTED);
+            case APPLIED -> List.of(UNDER_REVIEW, SHORTLISTED, INTERVIEW_SCHEDULED, REJECTED);
+            case UNDER_REVIEW -> List.of(SHORTLISTED, INTERVIEW_SCHEDULED, REJECTED);
             case SHORTLISTED -> List.of(INTERVIEW_SCHEDULED, SELECTED, REJECTED);
             case INTERVIEW_SCHEDULED -> List.of(SELECTED, REJECTED);
             case SELECTED, REJECTED -> List.of();
         };
     }
+
 }

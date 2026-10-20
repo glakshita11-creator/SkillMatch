@@ -56,7 +56,7 @@ public class ApplicationController {
         return ResponseEntity.ok(ApiResponse.ok("Application details retrieved.", app));
     }
 
-    @PatchMapping("/applications/{id}/status")
+    @RequestMapping(value = "/applications/{id}/status", method = {RequestMethod.PATCH, RequestMethod.PUT})
     @PreAuthorize("hasAnyRole('COMPANY', 'ADMIN')")
     public ResponseEntity<ApiResponse<ApplicationResponse>> updateApplicationStatus(
             @PathVariable("id") Long id,

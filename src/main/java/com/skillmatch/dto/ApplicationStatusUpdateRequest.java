@@ -1,7 +1,9 @@
 package com.skillmatch.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.skillmatch.enums.ApplicationStatus;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 public class ApplicationStatusUpdateRequest {
@@ -10,6 +12,9 @@ public class ApplicationStatusUpdateRequest {
     private ApplicationStatus status;
 
     private String recruiterNotes;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm[:ss]")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime interviewDate;
 
     public ApplicationStatusUpdateRequest() {
