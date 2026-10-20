@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Management — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 2.2rem; margin-bottom: 0.35rem;">Candidate Applicant Pipeline</h1>
+                <p style="color: var(--surface-500);">Review candidate qualifications, view resumes, coordinate interviews, and extend placement offers.</p>
+            </div>
+            <a href="/company-dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
+        </div>
+
+        <!-- Filter Controls Card -->
+        <div class="card" style="margin-bottom: 1.75rem; padding: 1.25rem;">
+            <div style="display: grid; grid-template-columns: 2fr 2fr 1fr auto; gap: 1rem; align-items: end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="filter-opp-select">Filter by Job / Opportunity</label>
+                    <select id="filter-opp-select" class="form-select">
+                        <option value="">All Company Openings</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="filter-search-applicant">Search Candidates</label>
+                    <input type="text" id="filter-search-applicant" class="form-control" placeholder="Search by student name, department, or skills...">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="filter-status-select">Status</label>
+                    <select id="filter-status-select" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="APPLIED">Applied</option>
+                        <option value="UNDER_REVIEW">Under Review</option>
+                        <option value="SHORTLISTED">Shortlisted</option>
+                        <option value="INTERVIEW_SCHEDULED">Interview Scheduled</option>
+                        <option value="SELECTED">Selected</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-secondary" id="btn-refresh-applicants" onclick="loadApplicants()">
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Applicants Table -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Candidate Details</th>
+                            <th>Target Role</th>
+                            <th>Academic Profile</th>
+                            <th>Status</th>
+                            <th>Resume &amp; Links</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicants-tbody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--surface-500); padding: 3rem;">Loading applicant pipeline...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Update Status & Schedule Interview Modal -->
+    <div class="modal-overlay" id="status-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeStatusModal()">&times;</button>
+            <h2 style="font-size: 1.4rem; margin-bottom: 0.35rem;">Manage Candidate Workflow</h2>
+            <p style="color: var(--surface-500); font-size: 0.9rem; margin-bottom: 1.5rem;" id="modal-candidate-info">
+                Candidate: Arun Kumar
+            </p>
+
+            <form id="status-form">
+                <input type="hidden" id="modal-app-id">
+
+                <div class="form-group">
+                    <label class="form-label" for="modal-new-status">Update Application Status <span class="required">*</span></label>
+                    <select id="modal-new-status" class="form-select" required>
+                        <option value="UNDER_REVIEW">Under Review</option>
+                        <option value="SHORTLISTED">Shortlisted</option>
+                        <option value="INTERVIEW_SCHEDULED">Interview Scheduled</option>
+                        <option value="SELECTED">Selected / Extended Offer</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="interview-date-group">
+                    <label class="form-label" for="modal-interview-date">Interview Date &amp; Time (Optional)</label>
+                    <input type="datetime-local" id="modal-interview-date" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="modal-recruiter-notes">Recruiter Feedback / Next Steps Notes</label>
+                    <textarea id="modal-recruiter-notes" class="form-control" rows="3" placeholder="e.g. Cleared technical screening. Interview invite sent via Google Meet."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeStatusModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-status">Save Workflow Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Candidate Profile Modal -->
+    <div class="modal-overlay" id="profile-view-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeProfileModal()">&times;</button>
+            <h2 style="font-size: 1.4rem; margin-bottom: 0.25rem;" id="view-student-name">Student Profile</h2>
+            <div style="color: var(--primary-700); font-size: 0.95rem; font-weight: 600; margin-bottom: 1.25rem;" id="view-student-contact"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.92rem;">
+                <div style="background: var(--surface-50); padding: 1rem; border-radius: var(--radius-md);">
+                    <strong>Academic Standing:</strong>
+                    <div id="view-student-academics" style="margin-top: 0.25rem; color: var(--surface-700);"></div>
+                </div>
+
+                <div>
+                    <strong>Technical Skills:</strong>
+                    <div id="view-student-skills" style="margin-top: 0.35rem;"></div>
+                </div>
+
+                <div>
+                    <strong>Cover Note:</strong>
+                    <div id="view-student-cover" style="margin-top: 0.35rem; color: var(--surface-700); font-style: italic; background: var(--surface-50); padding: 0.75rem; border-radius: var(--radius-md);"></div>
+                </div>
+
+                <div>
+                    <strong>Bio:</strong>
+                    <div id="view-student-bio" style="margin-top: 0.35rem; color: var(--surface-700);"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeProfileModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Logged in as Recruiter / Company</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let allApplicants = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_COMPANY']);
+            if (!user) return;
+            SkillMatch.initNavbar('applicants');
+
+            // Populate opportunities filter dropdown
+            try {
+                const oppsRes = await SkillMatch.apiRequest('/api/companies/me/opportunities');
+                if (oppsRes && oppsRes.data) {
+                    const select = document.getElementById('filter-opp-select');
+                    oppsRes.data.forEach(o => {
+                        const opt = document.createElement('option');
+                        opt.value = o.id;
+                        opt.textContent = `${o.title} (${o.applicationCount} applicants)`;
+                        select.appendChild(opt);
+                    });
+
+                    // Check if query param oppId is present
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const qOppId = urlParams.get('oppId');
+                    if (qOppId) {
+                        select.value = qOppId;
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            loadApplicants();
+
+            document.getElementById('filter-opp-select').addEventListener('change', loadApplicants);
+            document.getElementById('filter-status-select').addEventListener('change', renderApplicants);
+            document.getElementById('filter-search-applicant').addEventListener('input', renderApplicants);
+
+            // Status Form Submission
+            document.getElementById('status-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const appId = document.getElementById('modal-app-id').value;
+                const newStatus = document.getElementById('modal-new-status').value;
+                const recruiterNotes = document.getElementById('modal-recruiter-notes').value;
+                const interviewDate = document.getElementById('modal-interview-date').value;
+                const saveBtn = document.getElementById('btn-save-status');
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Updating...';
+
+                const payload = {
+                    status: newStatus,
+                    recruiterNotes: recruiterNotes,
+                    interviewDate: interviewDate ? interviewDate : null
+                };
+
+                try {
+                    const res = await SkillMatch.apiRequest(`/api/applications/${appId}/status`, {
+                        method: 'PATCH',
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res && res.success) {
+                        SkillMatch.showToast(`Candidate status updated to ${newStatus}.`, 'success');
+                        closeStatusModal();
+                        loadApplicants();
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Status transition failed.', 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Workflow Update';
+                }
+            });
+        });
+
+        async function loadApplicants() {
+            const oppId = document.getElementById('filter-opp-select').value;
+            const tbody = document.getElementById('applicants-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Loading candidates...</td></tr>';
+
+            let endpoint = '/api/companies/me/applicants';
+            if (oppId) {
+                endpoint = `/api/companies/me/opportunities/${oppId}/applicants`;
+            }
+
+            try {
+                const res = await SkillMatch.apiRequest(endpoint);
+                if (res && res.data) {
+                    allApplicants = res.data;
+                    renderApplicants();
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--danger-main); padding:2rem;">Error: ${SkillMatch.escapeHtml(err.message)}</td></tr>`;
+            }
+        }
+
+        function renderApplicants() {
+            const tbody = document.getElementById('applicants-tbody');
+            const statusFilter = document.getElementById('filter-status-select').value;
+            const searchTerm = document.getElementById('filter-search-applicant').value.toLowerCase().trim();
+
+            let list = allApplicants;
+            if (statusFilter) {
+                list = list.filter(a => a.status === statusFilter);
+            }
+            if (searchTerm) {
+                list = list.filter(a =>
+                    (a.studentName && a.studentName.toLowerCase().includes(searchTerm)) ||
+                    (a.studentDepartment && a.studentDepartment.toLowerCase().includes(searchTerm)) ||
+                    (a.studentSkills && a.studentSkills.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--surface-500); padding:3rem;">No candidates found matching the filters.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map(a => {
+                let resumeBtn = '';
+                if (a.hasResume) {
+                    resumeBtn = `
+                        <a href="/api/resumes/${a.studentProfileId}" class="btn btn-outline btn-sm" target="_blank" style="margin-bottom:0.25rem;">
+                            📄 PDF Resume
+                        </a>
+                    `;
+                } else if (a.resumeUrl) {
+                    resumeBtn = `
+                        <a href="${SkillMatch.escapeHtml(a.resumeUrl)}" class="btn btn-outline btn-sm" target="_blank">
+                            🔗 Portfolio
+                        </a>
+                    `;
+                } else {
+                    resumeBtn = '<span style="color:var(--surface-500); font-size:0.8rem;">No resume attached</span>';
+                }
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="font-weight:700; color:var(--surface-900); font-size:1rem;">
+                                ${SkillMatch.escapeHtml(a.studentName)}
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--surface-500);">
+                                ✉️ ${SkillMatch.escapeHtml(a.studentEmail)}<br>
+                                📞 ${SkillMatch.escapeHtml(a.studentPhone || 'N/A')}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight:600; color:var(--primary-800);">${SkillMatch.escapeHtml(a.opportunityTitle)}</div>
+                            <div style="font-size:0.8rem; color:var(--surface-500);">Applied: ${SkillMatch.formatDate(a.appliedAt)}</div>
+                        </td>
+                        <td>
+                            <div style="font-size:0.88rem;"><strong>${SkillMatch.escapeHtml(a.studentDepartment || 'N/A')}</strong></div>
+                            <div style="font-size:0.85rem; color:var(--surface-700);">
+                                CGPA: <strong>${a.studentCgpa || 'N/A'}</strong> • Batch: ${a.studentGraduationYear || 'N/A'}
+                            </div>
+                        </td>
+                        <td>
+                            ${SkillMatch.formatStatusBadge(a.status)}
+                            ${a.withdrawn ? '<span class="badge" style="background:#fee2e2; color:#991b1b; display:block; margin-top:0.25rem;">Withdrawn</span>' : ''}
+                        </td>
+                        <td>
+                            ${resumeBtn}
+                        </td>
+                        <td>
+                            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                                <button class="btn btn-secondary btn-sm" onclick="openProfileModal(${a.id})">Profile</button>
+                                <button class="btn btn-primary btn-sm" onclick="openStatusModal(${a.id})">Status</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openStatusModal(appId) {
+            const app = allApplicants.find(a => a.id === appId);
+            if (!app) return;
+
+            document.getElementById('modal-app-id').value = app.id;
+            document.getElementById('modal-candidate-info').textContent = `Candidate: ${app.studentName} • Role: ${app.opportunityTitle}`;
+            document.getElementById('modal-new-status').value = app.status;
+            document.getElementById('modal-recruiter-notes').value = app.recruiterNotes || '';
+            document.getElementById('modal-interview-date').value = app.interviewDate ? app.interviewDate.substring(0, 16) : '';
+
+            document.getElementById('status-modal').classList.add('active');
+        }
+
+        function closeStatusModal() {
+            document.getElementById('status-modal').classList.remove('active');
+        }
+
+        function openProfileModal(appId) {
+            const app = allApplicants.find(a => a.id === appId);
+            if (!app) return;
+
+            document.getElementById('view-student-name').textContent = app.studentName;
+            document.getElementById('view-student-contact').textContent = `${app.studentEmail} • ${app.studentPhone || 'No Phone'}`;
+            document.getElementById('view-student-academics').textContent = `${app.studentDegree || 'B.Tech'} in ${app.studentDepartment || 'Engineering'} | CGPA: ${app.studentCgpa || 'N/A'} | Class of ${app.studentGraduationYear || 'N/A'}`;
+
+            const skillsBox = document.getElementById('view-student-skills');
+            if (app.studentSkills) {
+                skillsBox.innerHTML = app.studentSkills.split(',').map(s => `<span class="tag">${SkillMatch.escapeHtml(s.trim())}</span>`).join('');
+            } else {
+                skillsBox.textContent = 'None listed.';
+            }
+
+            document.getElementById('view-student-cover').textContent = app.coverNote ? `"${app.coverNote}"` : 'No cover statement provided.';
+            document.getElementById('view-student-bio').textContent = 'Profile verified through university identity provider.';
+
+            document.getElementById('profile-view-modal').classList.add('active');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-view-modal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

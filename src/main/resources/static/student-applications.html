@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 2.2rem; margin-bottom: 0.35rem;">My Submitted Applications</h1>
+                <p style="color: var(--surface-500);">Track review progress, recruiter feedback, interview schedules, and placement offers.</p>
+            </div>
+            <a href="/opportunities.html" class="btn btn-primary">+ Apply for Opportunities</a>
+        </div>
+
+        <!-- Filter tabs -->
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm active" onclick="filterApplications('ALL', this)">All</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterApplications('APPLIED', this)">Applied</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterApplications('UNDER_REVIEW', this)">Under Review</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterApplications('SHORTLISTED', this)">Shortlisted</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterApplications('INTERVIEW_SCHEDULED', this)">Interview Scheduled</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterApplications('SELECTED', this)">Selected / Placed</button>
+        </div>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Opportunity &amp; Company</th>
+                            <th>Applied Date</th>
+                            <th>Current Status</th>
+                            <th>Recruiter Notes &amp; Updates</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applications-tbody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--surface-500); padding: 3rem;">Loading your applications...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Logged in as Student</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let allApplications = [];
+        let currentFilter = 'ALL';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_STUDENT']);
+            if (!user) return;
+            SkillMatch.initNavbar('applications');
+
+            loadApplications();
+        });
+
+        async function loadApplications() {
+            const tbody = document.getElementById('applications-tbody');
+            try {
+                const res = await SkillMatch.apiRequest('/api/students/me/applications');
+                if (res && res.data) {
+                    allApplications = res.data;
+                    renderFilteredApplications();
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--danger-main); padding:2rem;">Error: ${SkillMatch.escapeHtml(err.message)}</td></tr>`;
+            }
+        }
+
+        function filterApplications(status, btn) {
+            currentFilter = status;
+            document.querySelectorAll('button.btn-sm').forEach(b => b.classList.remove('active', 'btn-primary'));
+            btn.classList.add('btn-primary');
+            renderFilteredApplications();
+        }
+
+        function renderFilteredApplications() {
+            const tbody = document.getElementById('applications-tbody');
+            let list = allApplications;
+
+            if (currentFilter !== 'ALL') {
+                list = allApplications.filter(a => a.status === currentFilter);
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align:center; color:var(--surface-500); padding:3rem;">
+                            No applications found matching the filter.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(a => {
+                let recruiterFeedback = '<span style="color:var(--surface-300);">Awaiting recruiter response</span>';
+                if (a.recruiterNotes) {
+                    recruiterFeedback = `<div style="font-weight:500; color:var(--surface-700);">${SkillMatch.escapeHtml(a.recruiterNotes)}</div>`;
+                }
+
+                if (a.interviewDate) {
+                    recruiterFeedback += `<div style="font-size:0.8rem; color:var(--primary-700); margin-top:0.25rem;">📅 Interview: ${SkillMatch.formatDate(a.interviewDate)}</div>`;
+                }
+
+                let withdrawBtn = '';
+                if (a.withdrawn) {
+                    withdrawBtn = `<span class="badge" style="background:#fee2e2; color:#991b1b;">Withdrawn</span>`;
+                } else if (a.canWithdraw) {
+                    withdrawBtn = `
+                        <button class="btn btn-secondary btn-sm" style="color:var(--danger-main);" onclick="withdrawApp(${a.id}, '${SkillMatch.escapeHtml(a.opportunityTitle)}')">
+                            Withdraw
+                        </button>
+                    `;
+                }
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="font-weight:700; color:var(--surface-900); font-size:1rem;">
+                                ${SkillMatch.escapeHtml(a.opportunityTitle)}
+                            </div>
+                            <div style="font-size:0.88rem; color:var(--primary-700);">
+                                ${SkillMatch.escapeHtml(a.companyName)} • <span style="color:var(--surface-500);">${SkillMatch.escapeHtml(a.location)}</span>
+                            </div>
+                        </td>
+                        <td>${SkillMatch.formatDate(a.appliedAt)}</td>
+                        <td>${SkillMatch.formatStatusBadge(a.status)}</td>
+                        <td style="max-width:300px;">${recruiterFeedback}</td>
+                        <td>
+                            <div style="display:flex; gap:0.5rem; align-items:center;">
+                                <a href="/opportunity-details.html?id=${a.opportunityId}" class="btn btn-outline btn-sm">Details</a>
+                                ${withdrawBtn}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function withdrawApp(appId, title) {
+            SkillMatch.showConfirm(
+                'Withdraw Application',
+                `Are you sure you want to withdraw your application for "${title}"? This action cannot be reversed.`,
+                async () => {
+                    try {
+                        const res = await SkillMatch.apiRequest(`/api/applications/${appId}/withdraw`, {
+                            method: 'POST'
+                        });
+                        if (res && res.success) {
+                            SkillMatch.showToast('Application withdrawn successfully.', 'info');
+                            loadApplications();
+                        }
+                    } catch (err) {
+                        SkillMatch.showToast(err.message || 'Failed to withdraw application.', 'error');
+                    }
+                }
+            );
+        }
+    </script>
+</body>
+</html>

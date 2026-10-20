@@ -1,0 +1,34 @@
+# SkillMatch Configuration Example
+# Copy this file to application.properties and customize for your environment.
+
+spring.application.name=SkillMatch
+server.port=8080
+
+# MySQL Database Details
+# Set these as environment variables or update the values directly
+DB_URL=jdbc:mysql://localhost:3306/skillmatch?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+DB_USERNAME=root
+DB_PASSWORD=your_mysql_password_here
+
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA Settings
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.open-in-view=false
+
+# Resume Upload Directory
+UPLOAD_DIR=uploads/resumes
+skillmatch.upload.dir=${UPLOAD_DIR}
+spring.servlet.multipart.max-file-size=5MB
+spring.servlet.multipart.max-request-size=5MB
+
+# Session Configuration
+server.servlet.session.timeout=120m
+server.servlet.session.cookie.name=SKILLMATCH_SESSION
+server.servlet.session.cookie.http-only=true
+server.servlet.session.cookie.same-site=lax

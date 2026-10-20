@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunity Administration — SkillMatch Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 2.2rem; margin-bottom: 0.35rem;">Opportunity Administration &amp; Audit</h1>
+                <p style="color: var(--surface-500);">Review all corporate listings, publish or close campaigns, and enforce campus placement standards.</p>
+            </div>
+            <a href="/admin-dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="opp-search-input">Search Postings</label>
+                    <input type="text" id="opp-search-input" class="form-control" placeholder="Search by title, company, skills, or city...">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="opp-status-filter">Status</label>
+                    <select id="opp-status-filter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="PUBLISHED">Published</option>
+                        <option value="CLOSED">Closed</option>
+                        <option value="DRAFT">Draft</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="opp-type-filter">Type</label>
+                    <select id="opp-type-filter" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="FULL_TIME">Full Time</option>
+                        <option value="INTERNSHIP">Internship</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-secondary" onclick="loadAdminOpportunities()">Refresh</button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Job Title &amp; Company</th>
+                            <th>Type &amp; Compensation</th>
+                            <th>Criteria</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                            <th>Applicants</th>
+                            <th>Administrative Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-opps-tbody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: var(--surface-500); padding: 3rem;">Loading opportunities...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Institution Administration Portal</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let allOpportunities = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_ADMIN']);
+            if (!user) return;
+            SkillMatch.initNavbar('opportunities');
+
+            loadAdminOpportunities();
+
+            document.getElementById('opp-search-input').addEventListener('input', renderAdminOpportunities);
+            document.getElementById('opp-status-filter').addEventListener('change', renderAdminOpportunities);
+            document.getElementById('opp-type-filter').addEventListener('change', renderAdminOpportunities);
+        });
+
+        async function loadAdminOpportunities() {
+            const tbody = document.getElementById('admin-opps-tbody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Loading opportunities...</td></tr>';
+
+            try {
+                const res = await SkillMatch.apiRequest('/api/admin/opportunities');
+                if (res && res.data) {
+                    allOpportunities = res.data;
+                    renderAdminOpportunities();
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--danger-main); padding:2rem;">Error: ${SkillMatch.escapeHtml(err.message)}</td></tr>`;
+            }
+        }
+
+        function renderAdminOpportunities() {
+            const tbody = document.getElementById('admin-opps-tbody');
+            const search = document.getElementById('opp-search-input').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('opp-status-filter').value;
+            const typeFilter = document.getElementById('opp-type-filter').value;
+
+            let list = allOpportunities;
+            if (statusFilter) list = list.filter(o => o.status === statusFilter);
+            if (typeFilter) list = list.filter(o => o.opportunityType === typeFilter);
+            if (search) {
+                list = list.filter(o =>
+                    (o.title && o.title.toLowerCase().includes(search)) ||
+                    (o.companyName && o.companyName.toLowerCase().includes(search)) ||
+                    (o.location && o.location.toLowerCase().includes(search)) ||
+                    (o.requiredSkills && o.requiredSkills.toLowerCase().includes(search))
+                );
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--surface-500); padding:3rem;">No opportunities found matching the filter.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map(o => {
+                let statusToggleBtn = '';
+                if (o.status === 'PUBLISHED') {
+                    statusToggleBtn = `<button class="btn btn-secondary btn-sm" onclick="toggleOppStatus(${o.id}, 'close')">Close</button>`;
+                } else {
+                    statusToggleBtn = `<button class="btn btn-outline btn-sm" onclick="toggleOppStatus(${o.id}, 'publish')">Publish</button>`;
+                }
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="font-weight:700; color:var(--surface-900); font-size:1rem;">
+                                ${SkillMatch.escapeHtml(o.title)}
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--primary-700); font-weight:600;">
+                                🏢 ${SkillMatch.escapeHtml(o.companyName)}
+                            </div>
+                        </td>
+                        <td>
+                            <div><strong>${o.opportunityType.replace('_', ' ')}</strong></div>
+                            <div style="font-size:0.85rem; color:var(--surface-500);">${SkillMatch.escapeHtml(o.salaryOrStipend || 'Competitive')}</div>
+                        </td>
+                        <td>
+                            <div style="font-size:0.82rem;">Min CGPA: <strong>${o.minCgpa}</strong></div>
+                            <div style="font-size:0.8rem; color:var(--surface-500);">${SkillMatch.escapeHtml(o.eligibleDepartments || 'All Depts')}</div>
+                        </td>
+                        <td>${SkillMatch.formatDate(o.deadline)}</td>
+                        <td>${SkillMatch.formatStatusBadge(o.status)}</td>
+                        <td>
+                            <span class="badge" style="background:#f1f5f9; color:#475569;">
+                                👥 ${o.applicationCount}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display:flex; gap:0.4rem; align-items:center;">
+                                <a href="/opportunity-details.html?id=${o.id}" class="btn btn-secondary btn-sm" target="_blank">View</a>
+                                ${statusToggleBtn}
+                                <button class="btn btn-secondary btn-sm" style="color:var(--danger-main);" onclick="deleteOppAsAdmin(${o.id}, '${SkillMatch.escapeHtml(o.title)}')">Remove</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function toggleOppStatus(oppId, action) {
+            try {
+                await SkillMatch.apiRequest(`/api/opportunities/${oppId}/${action}`, { method: 'PATCH' });
+                SkillMatch.showToast(`Opportunity ${action}d successfully.`, 'info');
+                loadAdminOpportunities();
+            } catch (err) {
+                SkillMatch.showToast(err.message, 'error');
+            }
+        }
+
+        function deleteOppAsAdmin(oppId, title) {
+            SkillMatch.showConfirm(
+                'Remove Opportunity',
+                `Are you sure you want to remove the posting "${title}"? This will delete all applications submitted by students.`,
+                async () => {
+                    try {
+                        await SkillMatch.apiRequest(`/api/opportunities/${oppId}`, { method: 'DELETE' });
+                        SkillMatch.showToast('Opportunity removed.', 'info');
+                        loadAdminOpportunities();
+                    } catch (err) {
+                        SkillMatch.showToast(err.message, 'error');
+                    }
+                }
+            );
+        }
+    </script>
+</body>
+</html>

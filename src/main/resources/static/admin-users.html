@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User & Company Accounts — SkillMatch Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 2.2rem; margin-bottom: 0.35rem;">User &amp; Company Account Directory</h1>
+                <p style="color: var(--surface-500);">Audit registered students, manage corporate partner accounts, and control platform access.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddCompanyModal()">+ Onboard Company Account</button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 1rem; align-items: end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="search-user-input">Search Accounts</label>
+                    <input type="text" id="search-user-input" class="form-control" placeholder="Search by name, email, or phone...">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="role-filter-select">Account Role</label>
+                    <select id="role-filter-select" class="form-select">
+                        <option value="">All Roles</option>
+                        <option value="ROLE_STUDENT">Students</option>
+                        <option value="ROLE_COMPANY">Companies</option>
+                        <option value="ROLE_ADMIN">Administrators</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-secondary" onclick="loadUsers()">Refresh</button>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User Name &amp; Contact</th>
+                            <th>Email Address</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Registered Date</th>
+                            <th>Access Control</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--surface-500); padding: 3rem;">Loading user accounts...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Onboard Company Modal -->
+    <div class="modal-overlay" id="add-company-modal">
+        <div class="modal-content" style="max-width: 640px;">
+            <button class="modal-close" onclick="closeAddCompanyModal()">&times;</button>
+            <h2 style="font-size: 1.4rem; margin-bottom: 0.35rem;">Onboard Corporate Recruiter</h2>
+            <p style="color: var(--surface-500); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Provision a verified corporate account for recruiting partners.
+            </p>
+
+            <form id="add-company-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-name">Company Name <span class="required">*</span></label>
+                        <input type="text" id="add-comp-name" class="form-control" placeholder="e.g. Acme Innovations" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-industry">Industry Sector</label>
+                        <input type="text" id="add-comp-industry" class="form-control" placeholder="e.g. Cloud Computing">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-contact-name">Representative Name <span class="required">*</span></label>
+                        <input type="text" id="add-comp-contact-name" class="form-control" placeholder="e.g. Jane Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-email">Login Email Address <span class="required">*</span></label>
+                        <input type="email" id="add-comp-email" class="form-control" placeholder="recruiter@acme.com" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-password">Initial Password <span class="required">*</span></label>
+                        <input type="password" id="add-comp-password" class="form-control" minlength="6" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-phone">Contact Phone</label>
+                        <input type="tel" id="add-comp-phone" class="form-control" placeholder="+91 9123456789">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-location">Location / City</label>
+                        <input type="text" id="add-comp-location" class="form-control" placeholder="e.g. Bengaluru">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-comp-website">Website</label>
+                        <input type="url" id="add-comp-website" class="form-control" placeholder="https://acme.example.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="add-comp-desc">Brief Company Overview</label>
+                    <textarea id="add-comp-desc" class="form-control" rows="2" placeholder="Brief mission and technology stack..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddCompanyModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-new-comp">Create Company Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Institution Administration Portal</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let allUsers = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_ADMIN']);
+            if (!user) return;
+            SkillMatch.initNavbar('users');
+
+            loadUsers();
+
+            document.getElementById('role-filter-select').addEventListener('change', renderUsers);
+            document.getElementById('search-user-input').addEventListener('input', renderUsers);
+
+            // Add company form
+            document.getElementById('add-company-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('btn-save-new-comp');
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Creating account...';
+
+                const payload = {
+                    companyName: document.getElementById('add-comp-name').value,
+                    industry: document.getElementById('add-comp-industry').value,
+                    fullName: document.getElementById('add-comp-contact-name').value,
+                    email: document.getElementById('add-comp-email').value,
+                    password: document.getElementById('add-comp-password').value,
+                    phone: document.getElementById('add-comp-phone').value,
+                    location: document.getElementById('add-comp-location').value,
+                    website: document.getElementById('add-comp-website').value,
+                    description: document.getElementById('add-comp-desc').value
+                };
+
+                try {
+                    const res = await SkillMatch.apiRequest('/api/admin/companies', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res && res.success) {
+                        SkillMatch.showToast('Company account onboarded successfully!', 'success');
+                        closeAddCompanyModal();
+                        document.getElementById('add-company-form').reset();
+                        loadUsers();
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Failed to create company account.', 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Create Company Account';
+                }
+            });
+        });
+
+        async function loadUsers() {
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Loading accounts...</td></tr>';
+
+            try {
+                const res = await SkillMatch.apiRequest('/api/admin/users');
+                if (res && res.data) {
+                    allUsers = res.data;
+                    renderUsers();
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--danger-main); padding:2rem;">Error: ${SkillMatch.escapeHtml(err.message)}</td></tr>`;
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('users-tbody');
+            const roleFilter = document.getElementById('role-filter-select').value;
+            const searchTerm = document.getElementById('search-user-input').value.toLowerCase().trim();
+
+            let list = allUsers;
+            if (roleFilter) {
+                list = list.filter(u => u.role === roleFilter);
+            }
+            if (searchTerm) {
+                list = list.filter(u =>
+                    (u.fullName && u.fullName.toLowerCase().includes(searchTerm)) ||
+                    (u.email && u.email.toLowerCase().includes(searchTerm)) ||
+                    (u.phone && u.phone.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--surface-500); padding:3rem;">No accounts match the criteria.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map(u => {
+                let roleBadge = '';
+                if (u.role === 'ROLE_ADMIN') {
+                    roleBadge = `<span class="badge" style="background:#fee2e2; color:#991b1b;">ADMIN</span>`;
+                } else if (u.role === 'ROLE_COMPANY') {
+                    roleBadge = `<span class="badge" style="background:#ede9fe; color:#6d28d9;">COMPANY</span>`;
+                } else {
+                    roleBadge = `<span class="badge" style="background:#dbeafe; color:#1e40af;">STUDENT</span>`;
+                }
+
+                let statusBadge = u.active ?
+                    `<span class="badge badge-PUBLISHED">Active</span>` :
+                    `<span class="badge badge-REJECTED">Deactivated</span>`;
+
+                let toggleBtn = '';
+                if (u.role !== 'ROLE_ADMIN' || !u.active) {
+                    const newStatus = !u.active;
+                    const actionLabel = u.active ? 'Deactivate' : 'Reactivate';
+                    const btnClass = u.active ? 'btn-secondary' : 'btn-primary';
+                    toggleBtn = `
+                        <button class="btn ${btnClass} btn-sm" onclick="toggleAccount(${u.id}, ${newStatus}, '${SkillMatch.escapeHtml(u.fullName)}')">
+                            ${actionLabel}
+                        </button>
+                    `;
+                }
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="font-weight:700; color:var(--surface-900);">${SkillMatch.escapeHtml(u.fullName)}</div>
+                            <div style="font-size:0.8rem; color:var(--surface-500);">${SkillMatch.escapeHtml(u.phone || 'No Phone')}</div>
+                        </td>
+                        <td>${SkillMatch.escapeHtml(u.email)}</td>
+                        <td>${roleBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>${SkillMatch.formatDate(u.createdAt)}</td>
+                        <td>${toggleBtn}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleAccount(userId, newActiveState, name) {
+            const verb = newActiveState ? 'reactivate' : 'deactivate';
+            SkillMatch.showConfirm(
+                `${verb.charAt(0).toUpperCase() + verb.slice(1)} Account`,
+                `Are you sure you want to ${verb} the account for "${name}"?`,
+                async () => {
+                    try {
+                        const res = await SkillMatch.apiRequest(`/api/admin/users/${userId}/status`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({ active: newActiveState })
+                        });
+                        if (res && res.success) {
+                            SkillMatch.showToast(`Account ${verb}d successfully.`, 'info');
+                            loadUsers();
+                        }
+                    } catch (err) {
+                        SkillMatch.showToast(err.message || 'Operation failed.', 'error');
+                    }
+                }
+            );
+        }
+
+        function openAddCompanyModal() {
+            document.getElementById('add-company-modal').classList.add('active');
+        }
+
+        function closeAddCompanyModal() {
+            document.getElementById('add-company-modal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

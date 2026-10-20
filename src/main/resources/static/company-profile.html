@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper" style="max-width: 800px;">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; margin-bottom: 0.35rem;">Manage Company Profile</h1>
+            <p style="color: var(--surface-500);">Update organization background and contact channels visible to campus students.</p>
+        </div>
+
+        <div class="card" style="box-shadow: var(--shadow-md);">
+            <form id="company-profile-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="comp-name">Company / Organization Name <span class="required">*</span></label>
+                        <input type="text" id="comp-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="comp-industry">Industry / Sector</label>
+                        <input type="text" id="comp-industry" class="form-control" placeholder="e.g. Information Technology, FinTech">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="comp-location">Headquarters / Primary Office</label>
+                        <input type="text" id="comp-location" class="form-control" placeholder="e.g. Bengaluru, Karnataka">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="comp-website">Official Website URL</label>
+                        <input type="url" id="comp-website" class="form-control" placeholder="https://company.example.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="comp-contact-email">Recruitment Contact Email</label>
+                        <input type="email" id="comp-contact-email" class="form-control" placeholder="recruiter@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="comp-contact-phone">Contact Phone</label>
+                        <input type="tel" id="comp-contact-phone" class="form-control" placeholder="+91 9876543210">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="comp-description">Company Overview &amp; Mission</label>
+                    <textarea id="comp-description" class="form-control" rows="4" placeholder="Describe company products, global scale, technologies used, and workplace culture..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                    <a href="/company-dashboard.html" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary" id="btn-save-comp">
+                        Save Company Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Logged in as Recruiter / Company</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_COMPANY']);
+            if (!user) return;
+            SkillMatch.initNavbar('profile');
+
+            loadCompanyProfile();
+
+            document.getElementById('company-profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-save-comp');
+                btn.disabled = true;
+                btn.textContent = 'Saving...';
+
+                const payload = {
+                    companyName: document.getElementById('comp-name').value,
+                    industry: document.getElementById('comp-industry').value,
+                    location: document.getElementById('comp-location').value,
+                    website: document.getElementById('comp-website').value,
+                    contactEmail: document.getElementById('comp-contact-email').value,
+                    contactPhone: document.getElementById('comp-contact-phone').value,
+                    description: document.getElementById('comp-description').value
+                };
+
+                try {
+                    const res = await SkillMatch.apiRequest('/api/companies/me', {
+                        method: 'PUT',
+                        body: JSON.stringify(payload)
+                    });
+                    if (res && res.success) {
+                        SkillMatch.showToast('Company profile updated successfully.', 'success');
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Failed to update company profile.', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Save Company Profile';
+                }
+            });
+        });
+
+        async function loadCompanyProfile() {
+            try {
+                const res = await SkillMatch.apiRequest('/api/companies/me');
+                if (res && res.data) {
+                    const c = res.data;
+                    document.getElementById('comp-name').value = c.companyName || '';
+                    document.getElementById('comp-industry').value = c.industry || '';
+                    document.getElementById('comp-location').value = c.location || '';
+                    document.getElementById('comp-website').value = c.website || '';
+                    document.getElementById('comp-contact-email').value = c.contactEmail || '';
+                    document.getElementById('comp-contact-phone').value = c.contactPhone || '';
+                    document.getElementById('comp-description').value = c.description || '';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

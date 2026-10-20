@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body style="background: linear-gradient(135deg, var(--surface-50) 0%, var(--primary-50) 100%);">
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 180px);">
+        <div class="card" style="max-width: 460px; width: 100%; padding: 2.5rem; box-shadow: var(--shadow-xl);">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div class="brand-icon" style="margin: 0 auto 1rem; width: 48px; height: 48px; font-size: 1.6rem;">⚡</div>
+                <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Welcome to SkillMatch</h1>
+                <p style="color: var(--surface-500); font-size: 0.95rem;">Enter your credentials to access your dashboard</p>
+            </div>
+
+            <div id="login-error" style="display: none; padding: 0.85rem; margin-bottom: 1.25rem; border-radius: var(--radius-md); background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); font-size: 0.9rem;"></div>
+            <div id="login-info" style="display: none; padding: 0.85rem; margin-bottom: 1.25rem; border-radius: var(--radius-md); background: var(--info-bg); color: var(--info-text); border: 1px solid var(--info-border); font-size: 0.9rem;"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="login-email" class="form-control" placeholder="name@college.edu" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password <span class="required">*</span></label>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" id="btn-submit-login">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Quick Demo Credential Autofill Buttons -->
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--surface-200);">
+                <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--surface-500); letter-spacing: 0.05em; text-align: center; margin-bottom: 0.75rem;">
+                    Quick Demo Logins (1-Click)
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="autofill('arun.kumar@student.edu', 'Password@123')">
+                        👨‍🎓 Student
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="autofill('recruiter@techcorp.com', 'Password@123')">
+                        🏢 Recruiter
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="autofill('admin@skillmatch.edu', 'Admin@123')">
+                        🛡️ Admin
+                    </button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 1.75rem; font-size: 0.92rem; color: var(--surface-500);">
+                Don't have a student account? <a href="/register.html" style="font-weight: 700;">Sign up here</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            SkillMatch.initNavbar('');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('session') === 'expired') {
+                const infoBox = document.getElementById('login-info');
+                infoBox.textContent = 'Your session has expired. Please log in again.';
+                infoBox.style.display = 'block';
+            } else if (urlParams.get('registered') === 'true') {
+                const infoBox = document.getElementById('login-info');
+                infoBox.textContent = 'Account created successfully! Please log in with your credentials.';
+                infoBox.style.display = 'block';
+            } else if (urlParams.get('loggedOut') === 'true') {
+                const infoBox = document.getElementById('login-info');
+                infoBox.textContent = 'You have been safely logged out.';
+                infoBox.style.display = 'block';
+            }
+
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                const errorBox = document.getElementById('login-error');
+                const submitBtn = document.getElementById('btn-submit-login');
+
+                errorBox.style.display = 'none';
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Signing in...';
+
+                try {
+                    const user = await SkillMatch.login(email, password);
+                    SkillMatch.showToast('Login successful! Redirecting...', 'success');
+
+                    // Check redirect param
+                    const redirectUrl = urlParams.get('redirect');
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                        return;
+                    }
+
+                    // Route based on authenticated role
+                    if (user.role === 'ROLE_STUDENT') {
+                        window.location.href = '/student-dashboard.html';
+                    } else if (user.role === 'ROLE_COMPANY') {
+                        window.location.href = '/company-dashboard.html';
+                    } else if (user.role === 'ROLE_ADMIN') {
+                        window.location.href = '/admin-dashboard.html';
+                    } else {
+                        window.location.href = '/opportunities.html';
+                    }
+                } catch (err) {
+                    errorBox.textContent = err.message || 'Login failed. Please check your credentials.';
+                    errorBox.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Sign In';
+                }
+            });
+        });
+
+        function autofill(email, password) {
+            document.getElementById('login-email').value = email;
+            document.getElementById('login-password').value = password;
+        }
+    </script>
+</body>
+</html>

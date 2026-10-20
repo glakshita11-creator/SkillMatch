@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post / Edit Opportunity — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper" style="max-width: 860px;">
+        <div style="margin-bottom: 2rem;">
+            <a href="/company-dashboard.html" style="font-size: 0.9rem; font-weight: 600; color: var(--surface-500); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">
+                ← Back to Dashboard
+            </a>
+            <h1 style="font-size: 2rem; margin-bottom: 0.35rem;" id="form-heading">Create New Opportunity</h1>
+            <p style="color: var(--surface-500);">Define position requirements, compensation, and criteria-driven eligibility rules.</p>
+        </div>
+
+        <div class="card" style="box-shadow: var(--shadow-md);">
+            <form id="opportunity-form">
+                <div class="form-group">
+                    <label class="form-label" for="opp-title">Job / Internship Title <span class="required">*</span></label>
+                    <input type="text" id="opp-title" class="form-control" placeholder="e.g. Associate Backend Software Engineer (Java)" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="opp-type">Opportunity Type <span class="required">*</span></label>
+                        <select id="opp-type" class="form-select" required>
+                            <option value="FULL_TIME">Full Time</option>
+                            <option value="INTERNSHIP">Internship</option>
+                            <option value="PART_TIME">Part Time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="opp-workplace">Workplace Model <span class="required">*</span></label>
+                        <select id="opp-workplace" class="form-select" required>
+                            <option value="ON_SITE">On Site</option>
+                            <option value="HYBRID" selected>Hybrid</option>
+                            <option value="REMOTE">Remote</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="opp-location">Location / City <span class="required">*</span></label>
+                        <input type="text" id="opp-location" class="form-control" placeholder="e.g. Bengaluru, Karnataka" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="opp-salary">Compensation / Stipend</label>
+                        <input type="text" id="opp-salary" class="form-control" placeholder="e.g. 12.5 LPA or 35,000 / month">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="opp-openings">Number of Openings <span class="required">*</span></label>
+                        <input type="number" id="opp-openings" class="form-control" min="1" value="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="opp-deadline">Application Deadline <span class="required">*</span></label>
+                        <input type="date" id="opp-deadline" class="form-control" required>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.15rem; color: var(--primary-800); margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--surface-200);">
+                    🎯 Student Eligibility Criteria Configuration
+                </h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="opp-min-cgpa">Minimum CGPA (0.00 - 10.00)</label>
+                        <input type="number" id="opp-min-cgpa" class="form-control" step="0.01" min="0" max="10" value="7.00">
+                        <div class="form-hint">Students below this CGPA will be barred from applying.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="opp-grad-years">Eligible Graduation Years</label>
+                        <input type="text" id="opp-grad-years" class="form-control" placeholder="e.g. 2025, 2026" value="2025, 2026">
+                        <div class="form-hint">Comma separated graduation years.</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="opp-departments">Eligible Academic Departments</label>
+                    <input type="text" id="opp-departments" class="form-control" placeholder="e.g. Computer Science, Information Technology, Electronics" value="Computer Science, Information Technology">
+                    <div class="form-hint">Leave blank or specify comma-separated departments.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="opp-skills">Required Technical Skills</label>
+                    <input type="text" id="opp-skills" class="form-control" placeholder="e.g. Java, Spring Boot, MySQL, REST APIs, Git">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="opp-description">Detailed Job Description &amp; Responsibilities <span class="required">*</span></label>
+                    <textarea id="opp-description" class="form-control" rows="6" placeholder="Outline day-to-day responsibilities, platform architecture, technical expectations, and interview process..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="opp-status">Publication Status</label>
+                    <select id="opp-status" class="form-select">
+                        <option value="PUBLISHED" selected>Published (Accepting Applications)</option>
+                        <option value="DRAFT">Draft (Hidden from Students)</option>
+                        <option value="CLOSED">Closed (Archived)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                    <a href="/company-dashboard.html" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btn-submit-opp">
+                        Save &amp; Publish Opportunity
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Logged in as Recruiter / Company</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let editOppId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_COMPANY', 'ROLE_ADMIN']);
+            if (!user) return;
+            SkillMatch.initNavbar('post-opp');
+
+            // Default deadline: 30 days from now
+            const defaultDate = new Date();
+            defaultDate.setDate(defaultDate.getDate() + 30);
+            document.getElementById('opp-deadline').value = defaultDate.toISOString().split('T')[0];
+            document.getElementById('opp-deadline').min = new Date().toISOString().split('T')[0];
+
+            const urlParams = new URLSearchParams(window.location.search);
+            editOppId = urlParams.get('id');
+
+            if (editOppId) {
+                document.getElementById('form-heading').textContent = 'Edit Opportunity';
+                document.getElementById('btn-submit-opp').textContent = 'Update Opportunity';
+                loadExistingOpportunity(editOppId);
+            }
+
+            document.getElementById('opportunity-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-submit-opp');
+                btn.disabled = true;
+                btn.textContent = 'Saving opportunity...';
+
+                const payload = {
+                    title: document.getElementById('opp-title').value,
+                    opportunityType: document.getElementById('opp-type').value,
+                    workplaceType: document.getElementById('opp-workplace').value,
+                    location: document.getElementById('opp-location').value,
+                    salaryOrStipend: document.getElementById('opp-salary').value,
+                    openings: parseInt(document.getElementById('opp-openings').value, 10),
+                    deadline: document.getElementById('opp-deadline').value,
+                    minCgpa: parseFloat(document.getElementById('opp-min-cgpa').value) || 0.0,
+                    eligibleGraduationYears: document.getElementById('opp-grad-years').value,
+                    eligibleDepartments: document.getElementById('opp-departments').value,
+                    requiredSkills: document.getElementById('opp-skills').value,
+                    description: document.getElementById('opp-description').value,
+                    status: document.getElementById('opp-status').value
+                };
+
+                try {
+                    let res;
+                    if (editOppId) {
+                        res = await SkillMatch.apiRequest(`/api/opportunities/${editOppId}`, {
+                            method: 'PUT',
+                            body: JSON.stringify(payload)
+                        });
+                    } else {
+                        res = await SkillMatch.apiRequest('/api/opportunities', {
+                            method: 'POST',
+                            body: JSON.stringify(payload)
+                        });
+                    }
+
+                    if (res && res.success) {
+                        SkillMatch.showToast(`Opportunity ${editOppId ? 'updated' : 'published'} successfully!`, 'success');
+                        setTimeout(() => {
+                            window.location.href = '/company-dashboard.html';
+                        }, 1000);
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Failed to save opportunity.', 'error');
+                    btn.disabled = false;
+                    btn.textContent = editOppId ? 'Update Opportunity' : 'Save & Publish Opportunity';
+                }
+            });
+        });
+
+        async function loadExistingOpportunity(id) {
+            try {
+                const res = await SkillMatch.apiRequest(`/api/opportunities/${id}`);
+                if (res && res.data) {
+                    const o = res.data;
+                    document.getElementById('opp-title').value = o.title || '';
+                    document.getElementById('opp-type').value = o.opportunityType || 'FULL_TIME';
+                    document.getElementById('opp-workplace').value = o.workplaceType || 'HYBRID';
+                    document.getElementById('opp-location').value = o.location || '';
+                    document.getElementById('opp-salary').value = o.salaryOrStipend || '';
+                    document.getElementById('opp-openings').value = o.openings || 1;
+                    if (o.deadline) document.getElementById('opp-deadline').value = o.deadline;
+                    document.getElementById('opp-min-cgpa').value = o.minCgpa !== null ? o.minCgpa : '';
+                    document.getElementById('opp-grad-years').value = o.eligibleGraduationYears || '';
+                    document.getElementById('opp-departments').value = o.eligibleDepartments || '';
+                    document.getElementById('opp-skills').value = o.requiredSkills || '';
+                    document.getElementById('opp-description').value = o.description || '';
+                    document.getElementById('opp-status').value = o.status || 'PUBLISHED';
+                }
+            } catch (err) {
+                SkillMatch.showToast('Failed to load opportunity details.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

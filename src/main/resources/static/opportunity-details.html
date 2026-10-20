@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunity Details — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper" style="max-width: 1040px;">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="/opportunities.html" style="font-size: 0.9rem; font-weight: 600; color: var(--surface-500); display: inline-flex; align-items: center; gap: 0.35rem;">
+                ← Back to All Opportunities
+            </a>
+        </div>
+
+        <div id="opp-loading" style="text-align: center; padding: 4rem; color: var(--surface-500);">
+            Loading opportunity details...
+        </div>
+
+        <div id="opp-container" style="display: none;">
+            <!-- Header Card -->
+            <div class="card" style="margin-bottom: 2rem; border-top: 5px solid var(--primary-600);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap;">
+                    <div>
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center;">
+                            <span class="badge" id="detail-type-badge">FULL TIME</span>
+                            <span class="badge badge-PUBLISHED" id="detail-status-badge">OPEN</span>
+                        </div>
+                        <h1 style="font-size: 2.2rem; margin-bottom: 0.35rem;" id="detail-title">Software Engineer</h1>
+                        <div style="font-size: 1.15rem; font-weight: 600; color: var(--primary-700);" id="detail-company">Company Name</div>
+                        <div style="font-size: 0.9rem; color: var(--surface-500); margin-top: 0.35rem;" id="detail-company-meta">
+                            📍 Location • 🌐 Website
+                        </div>
+                    </div>
+
+                    <div style="text-align: right;" id="detail-apply-cta-box">
+                        <div style="font-size: 1.6rem; font-weight: 800; color: var(--surface-900); font-family: var(--font-heading);" id="detail-salary">
+                            12.0 LPA
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--surface-500); margin-bottom: 1rem;">Compensation / Stipend</div>
+                        <div id="apply-btn-wrapper">
+                            <!-- Injected dynamically based on auth & eligibility -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Layout -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+                <!-- Left Column: Description & Skills -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <div class="card">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--surface-100);">
+                            Role Overview &amp; Description
+                        </h2>
+                        <div id="detail-description" style="line-height: 1.75; color: var(--surface-700); white-space: pre-line;"></div>
+                    </div>
+
+                    <div class="card">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--surface-100);">
+                            Required Technical Skills
+                        </h2>
+                        <div id="detail-skills-container" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Criteria & Eligibility Breakdown -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <!-- Eligibility Assessment Card -->
+                    <div class="card" id="eligibility-card" style="border: 2px solid var(--primary-200);">
+                        <div class="card-header">
+                            <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span>🎯</span> Eligibility Status
+                            </h3>
+                        </div>
+                        <div id="eligibility-details-box" style="font-size: 0.92rem;">
+                            <!-- Injected by eligibility check -->
+                        </div>
+                    </div>
+
+                    <!-- Job Snapshot Info Card -->
+                    <div class="card">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--surface-100);">
+                            Opportunity Highlights
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.92rem;">
+                            <div>
+                                <span style="color: var(--surface-500); display: block; font-size: 0.8rem;">Minimum CGPA</span>
+                                <strong id="detail-min-cgpa">7.50 / 10.00</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--surface-500); display: block; font-size: 0.8rem;">Eligible Departments</span>
+                                <strong id="detail-departments">Computer Science, IT</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--surface-500); display: block; font-size: 0.8rem;">Eligible Batches (Year)</span>
+                                <strong id="detail-grad-years">2025, 2026</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--surface-500); display: block; font-size: 0.8rem;">Workplace Model</span>
+                                <strong id="detail-workplace">Hybrid</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--surface-500); display: block; font-size: 0.8rem;">Open Positions</span>
+                                <strong id="detail-openings">15 Positions</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--surface-500); display: block; font-size: 0.8rem;">Application Deadline</span>
+                                <strong id="detail-deadline" style="color: var(--danger-main);">Nov 30, 2026</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Application Modal -->
+    <div class="modal-overlay" id="apply-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Submit Application</h2>
+            <p style="color: var(--surface-500); font-size: 0.9rem; margin-bottom: 1.5rem;" id="modal-opp-subtitle">
+                You are applying to Opportunity at Company
+            </p>
+
+            <form id="apply-form">
+                <div class="form-group">
+                    <label class="form-label" for="cover-note">Cover Note / Candidate Statement (Optional)</label>
+                    <textarea id="cover-note" class="form-control" rows="4" placeholder="Highlight relevant coursework, projects, or why you are a great match for this role..."></textarea>
+                    <div class="form-hint">Your registered profile, CGPA, department, and resume will be securely transmitted to the recruiter.</div>
+                </div>
+
+                <div style="background: var(--surface-50); border: 1px solid var(--surface-200); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--surface-700);">
+                    ✓ I verify that my profile details are accurate.<br>
+                    ✓ I understand that duplicate applications are blocked.
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-apply">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-confirm-apply">Confirm &amp; Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Campus Recruitment Platform</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let currentOpportunity = null;
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            SkillMatch.initNavbar('opportunities');
+            currentUser = await SkillMatch.getCurrentUser();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const oppId = urlParams.get('id');
+
+            if (!oppId) {
+                window.location.href = '/opportunities.html';
+                return;
+            }
+
+            loadOpportunity(oppId);
+
+            // Modal controls
+            const modal = document.getElementById('apply-modal');
+            const closeBtn = document.getElementById('modal-close-btn');
+            const cancelBtn = document.getElementById('btn-cancel-apply');
+
+            const closeModal = () => modal.classList.remove('active');
+            closeBtn.onclick = closeModal;
+            cancelBtn.onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+            // Form submission
+            document.getElementById('apply-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = document.getElementById('btn-confirm-apply');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                const coverNote = document.getElementById('cover-note').value;
+
+                try {
+                    const res = await SkillMatch.apiRequest(`/api/opportunities/${oppId}/applications`, {
+                        method: 'POST',
+                        body: JSON.stringify({ coverNote: coverNote })
+                    });
+
+                    if (res && res.success) {
+                        SkillMatch.showToast('Application submitted successfully! Recruiter notified.', 'success');
+                        closeModal();
+                        loadOpportunity(oppId); // Refresh state
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Failed to submit application.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Confirm & Submit';
+                }
+            });
+        });
+
+        async function loadOpportunity(oppId) {
+            try {
+                const res = await SkillMatch.apiRequest(`/api/opportunities/${oppId}`);
+                if (!res || !res.data) throw new Error('Opportunity not found.');
+
+                currentOpportunity = res.data;
+                renderDetails(res.data);
+
+                // If user is a student, evaluate granular eligibility
+                if (currentUser && currentUser.role === 'ROLE_STUDENT') {
+                    evaluateStudentEligibility(oppId);
+                } else if (!currentUser) {
+                    renderGuestEligibility();
+                } else {
+                    document.getElementById('eligibility-card').style.display = 'none';
+                    document.getElementById('apply-btn-wrapper').innerHTML = `
+                        <div style="font-size:0.85rem; color:var(--surface-500);">Logged in as ${currentUser.role.replace('ROLE_', '')}</div>
+                    `;
+                }
+
+                document.getElementById('opp-loading').style.display = 'none';
+                document.getElementById('opp-container').style.display = 'block';
+            } catch (err) {
+                document.getElementById('opp-loading').innerHTML = `
+                    <div style="color:var(--danger-main); padding:3rem;">
+                        <h3>Failed to load opportunity</h3>
+                        <p>${SkillMatch.escapeHtml(err.message)}</p>
+                        <a href="/opportunities.html" class="btn btn-secondary" style="margin-top:1rem;">Back to Browse</a>
+                    </div>
+                `;
+            }
+        }
+
+        function renderDetails(o) {
+            document.getElementById('detail-title').textContent = o.title;
+            document.getElementById('detail-company').textContent = o.companyName;
+            document.getElementById('detail-company-meta').textContent = `📍 ${o.location} • 🏢 ${o.workplaceType.replace('_', ' ')} ${o.companyWebsite ? '• 🌐 ' + o.companyWebsite : ''}`;
+            document.getElementById('detail-salary').textContent = o.salaryOrStipend || 'Competitive';
+            document.getElementById('detail-description').textContent = o.description;
+
+            document.getElementById('detail-min-cgpa').textContent = o.minCgpa > 0 ? `${o.minCgpa} / 10.00` : 'No Minimum CGPA';
+            document.getElementById('detail-departments').textContent = o.eligibleDepartments || 'All Engineering & Tech Branches';
+            document.getElementById('detail-grad-years').textContent = o.eligibleGraduationYears || 'All Batches';
+            document.getElementById('detail-workplace').textContent = o.workplaceType.replace('_', ' ');
+            document.getElementById('detail-openings').textContent = `${o.openings} Open Position${o.openings > 1 ? 's' : ''}`;
+            document.getElementById('detail-deadline').textContent = SkillMatch.formatDate(o.deadline);
+
+            const typeBadge = document.getElementById('detail-type-badge');
+            typeBadge.className = `badge ${o.opportunityType === 'INTERNSHIP' ? 'badge-UNDER_REVIEW' : 'badge-SHORTLISTED'}`;
+            typeBadge.textContent = o.opportunityType.replace('_', ' ');
+
+            // Skills chips
+            const skillsContainer = document.getElementById('detail-skills-container');
+            if (o.requiredSkills) {
+                skillsContainer.innerHTML = o.requiredSkills.split(',')
+                    .map(s => `<span class="tag" style="font-size:0.95rem; padding:0.35rem 0.75rem;">${SkillMatch.escapeHtml(s.trim())}</span>`)
+                    .join('');
+            } else {
+                skillsContainer.innerHTML = '<span style="color:var(--surface-500);">No specific technical skills prerequisite configured.</span>';
+            }
+        }
+
+        async function evaluateStudentEligibility(oppId) {
+            const eligBox = document.getElementById('eligibility-details-box');
+            const applyWrapper = document.getElementById('apply-btn-wrapper');
+
+            try {
+                const res = await SkillMatch.apiRequest(`/api/opportunities/${oppId}/eligibility`);
+                if (res && res.data) {
+                    const e = res.data;
+
+                    if (e.alreadyApplied) {
+                        eligBox.innerHTML = `
+                            <div style="background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; padding:1rem; border-radius:var(--radius-md);">
+                                <div style="font-weight:700; margin-bottom:0.25rem;">✓ Application Submitted</div>
+                                <div>You have already applied for this opening. You can view status updates in your dashboard.</div>
+                            </div>
+                        `;
+                        applyWrapper.innerHTML = `
+                            <button class="btn btn-secondary btn-lg" disabled>Already Applied</button>
+                        `;
+                        return;
+                    }
+
+                    if (e.eligible) {
+                        eligBox.innerHTML = `
+                            <div style="background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-text); padding:1rem; border-radius:var(--radius-md);">
+                                <div style="font-weight:700; margin-bottom:0.35rem;">✓ You Are Eligible</div>
+                                <div>You meet all academic criteria (CGPA, department, graduation year) for this opportunity.</div>
+                            </div>
+                        `;
+                        applyWrapper.innerHTML = `
+                            <button class="btn btn-primary btn-lg" id="btn-open-apply-modal" onclick="openApplyModal()">
+                                Apply Now 🚀
+                            </button>
+                        `;
+                    } else {
+                        const reasonsHtml = e.reasons.map(r => `<li>${SkillMatch.escapeHtml(r)}</li>`).join('');
+                        eligBox.innerHTML = `
+                            <div style="background:var(--warning-bg); border:1px solid var(--warning-border); color:var(--warning-text); padding:1rem; border-radius:var(--radius-md);">
+                                <div style="font-weight:700; margin-bottom:0.35rem;">⚠️ Eligibility Criteria Mismatch</div>
+                                <ul style="padding-left:1.25rem; font-size:0.88rem; line-height:1.5;">
+                                    ${reasonsHtml}
+                                </ul>
+                            </div>
+                        `;
+                        applyWrapper.innerHTML = `
+                            <button class="btn btn-secondary btn-lg" disabled title="You do not meet the criteria requirements">
+                                Ineligible to Apply
+                            </button>
+                        `;
+                    }
+                }
+            } catch (err) {
+                eligBox.innerHTML = `<div style="color:var(--danger-main);">Failed to verify eligibility.</div>`;
+            }
+        }
+
+        function renderGuestEligibility() {
+            const eligBox = document.getElementById('eligibility-details-box');
+            eligBox.innerHTML = `
+                <div style="color:var(--surface-500); font-size:0.9rem;">
+                    Sign in with your verified college student account to automatically check eligibility and apply.
+                </div>
+            `;
+            document.getElementById('apply-btn-wrapper').innerHTML = `
+                <a href="/login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn btn-primary btn-lg">
+                    Log In to Apply
+                </a>
+            `;
+        }
+
+        function openApplyModal() {
+            if (!currentOpportunity) return;
+            document.getElementById('modal-opp-subtitle').textContent = `Applying for ${currentOpportunity.title} at ${currentOpportunity.companyName}`;
+            document.getElementById('apply-modal').classList.add('active');
+        }
+    </script>
+</body>
+</html>

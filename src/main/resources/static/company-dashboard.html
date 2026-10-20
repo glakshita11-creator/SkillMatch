@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper">
+        <!-- Company Header Banner -->
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, var(--surface-0) 0%, var(--primary-50) 100%); border-left: 6px solid var(--primary-700);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="font-size: 2rem; margin-bottom: 0.35rem;" id="company-welcome-name">Recruiter Portal</h1>
+                    <div style="color: var(--surface-500); font-size: 0.95rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <span id="company-industry-tag">🏢 Industry: Loading...</span>
+                        <span id="company-location-tag">📍 Location: Loading...</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="/company-opportunity-form.html" class="btn btn-primary">+ Post New Opening</a>
+                    <a href="/company-profile.html" class="btn btn-outline">Company Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple">💼</div>
+                <div>
+                    <div class="stat-value" id="stat-active-opps">0</div>
+                    <div class="stat-label">Active Openings</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div>
+                    <div class="stat-value" id="stat-total-applicants">0</div>
+                    <div class="stat-label">Total Applicants</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon amber">⭐</div>
+                <div>
+                    <div class="stat-value" id="stat-shortlisted">0</div>
+                    <div class="stat-label">Shortlisted Candidates</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">🏆</div>
+                <div>
+                    <div class="stat-value" id="stat-selected">0</div>
+                    <div class="stat-label">Offers Extended</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Opportunities Table -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Manage Your Company's Opportunities</h2>
+                <a href="/company-opportunity-form.html" class="btn btn-primary btn-sm">+ Create Opening</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Job Title &amp; Type</th>
+                            <th>Target Criteria</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                            <th>Applicants</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="company-opps-tbody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--surface-500); padding: 3rem;">Loading opportunities...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Logged in as Recruiter / Company</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_COMPANY']);
+            if (!user) return;
+            SkillMatch.initNavbar('dashboard');
+
+            // Load company profile
+            try {
+                const profileRes = await SkillMatch.apiRequest('/api/companies/me');
+                if (profileRes && profileRes.data) {
+                    const c = profileRes.data;
+                    document.getElementById('company-welcome-name').textContent = c.companyName || 'Recruiter Portal';
+                    document.getElementById('company-industry-tag').textContent = `🏢 ${c.industry || 'IT / Engineering'}`;
+                    document.getElementById('company-location-tag').textContent = `📍 ${c.location || 'India'}`;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            // Load company dashboard stats
+            try {
+                const statsRes = await SkillMatch.apiRequest('/api/companies/me/dashboard');
+                if (statsRes && statsRes.data) {
+                    const s = statsRes.data;
+                    document.getElementById('stat-active-opps').textContent = s.activeOpportunities;
+                    document.getElementById('stat-total-applicants').textContent = s.totalApplicants;
+                    document.getElementById('stat-shortlisted').textContent = s.shortlistedCount + s.interviewScheduledCount;
+                    document.getElementById('stat-selected').textContent = s.selectedCount;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            loadOpportunities();
+        });
+
+        async function loadOpportunities() {
+            const tbody = document.getElementById('company-opps-tbody');
+            try {
+                const res = await SkillMatch.apiRequest('/api/companies/me/opportunities');
+                if (res && res.data) {
+                    const opps = res.data;
+                    if (opps.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" style="text-align:center; padding:3rem; color:var(--surface-500);">
+                                    You have not posted any opportunities yet.
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+
+                    tbody.innerHTML = opps.map(o => {
+                        let togglePublishBtn = '';
+                        if (o.status === 'PUBLISHED') {
+                            togglePublishBtn = `<button class="btn btn-secondary btn-sm" onclick="closeOpportunity(${o.id})">Close</button>`;
+                        } else {
+                            togglePublishBtn = `<button class="btn btn-outline btn-sm" onclick="publishOpportunity(${o.id})">Publish</button>`;
+                        }
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div style="font-weight:700; color:var(--surface-900); font-size:1rem;">
+                                        ${SkillMatch.escapeHtml(o.title)}
+                                    </div>
+                                    <div style="font-size:0.85rem; color:var(--surface-500);">
+                                        ${o.opportunityType.replace('_', ' ')} • ${SkillMatch.escapeHtml(o.location)} • ${SkillMatch.escapeHtml(o.salaryOrStipend || 'Competitive')}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-size:0.85rem;">Min CGPA: <strong>${o.minCgpa}</strong></div>
+                                    <div style="font-size:0.8rem; color:var(--surface-500);">${SkillMatch.escapeHtml(o.eligibleDepartments || 'All Depts')}</div>
+                                </td>
+                                <td>${SkillMatch.formatDate(o.deadline)}</td>
+                                <td>${SkillMatch.formatStatusBadge(o.status)}</td>
+                                <td>
+                                    <a href="/company-applicants.html?oppId=${o.id}" class="btn btn-outline btn-sm">
+                                        👥 ${o.applicationCount} Applicants
+                                    </a>
+                                </td>
+                                <td>
+                                    <div style="display:flex; gap:0.4rem; align-items:center;">
+                                        <a href="/company-opportunity-form.html?id=${o.id}" class="btn btn-secondary btn-sm">Edit</a>
+                                        ${togglePublishBtn}
+                                        <button class="btn btn-secondary btn-sm" style="color:var(--danger-main);" onclick="deleteOpportunity(${o.id}, '${SkillMatch.escapeHtml(o.title)}')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--danger-main); padding:2rem;">Error: ${SkillMatch.escapeHtml(err.message)}</td></tr>`;
+            }
+        }
+
+        async function closeOpportunity(id) {
+            try {
+                await SkillMatch.apiRequest(`/api/opportunities/${id}/close`, { method: 'PATCH' });
+                SkillMatch.showToast('Opportunity closed.', 'info');
+                loadOpportunities();
+            } catch (err) {
+                SkillMatch.showToast(err.message, 'error');
+            }
+        }
+
+        async function publishOpportunity(id) {
+            try {
+                await SkillMatch.apiRequest(`/api/opportunities/${id}/publish`, { method: 'PATCH' });
+                SkillMatch.showToast('Opportunity published live.', 'success');
+                loadOpportunities();
+            } catch (err) {
+                SkillMatch.showToast(err.message, 'error');
+            }
+        }
+
+        function deleteOpportunity(id, title) {
+            SkillMatch.showConfirm(
+                'Delete Opportunity',
+                `Are you sure you want to permanently delete "${title}" and all related applicant records?`,
+                async () => {
+                    try {
+                        await SkillMatch.apiRequest(`/api/opportunities/${id}`, { method: 'DELETE' });
+                        SkillMatch.showToast('Opportunity deleted.', 'info');
+                        loadOpportunities();
+                    } catch (err) {
+                        SkillMatch.showToast(err.message, 'error');
+                    }
+                }
+            );
+        }
+    </script>
+</body>
+</html>

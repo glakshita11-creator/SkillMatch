@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Student Profile — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper" style="max-width: 900px;">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; margin-bottom: 0.35rem;">Manage Student Profile</h1>
+            <p style="color: var(--surface-500);">Keep your academic and contact information accurate for campus eligibility checking.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+            <!-- Profile Details Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Academic &amp; Personal Info</h2>
+                </div>
+
+                <form id="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="profile-name">Full Name <span class="required">*</span></label>
+                            <input type="text" id="profile-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-email">Email Address</label>
+                            <input type="email" id="profile-email" class="form-control" disabled style="background:var(--surface-100); cursor:not-allowed;">
+                            <div class="form-hint">Email address cannot be changed.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="profile-phone">Phone Number</label>
+                            <input type="tel" id="profile-phone" class="form-control" placeholder="+91 9876543210">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-dept">Department <span class="required">*</span></label>
+                            <select id="profile-dept" class="form-select" required>
+                                <option value="Computer Science">Computer Science &amp; Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics & Communication">Electronics &amp; Communication</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                                <option value="Data Science & AI">Data Science &amp; AI</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="profile-degree">Degree <span class="required">*</span></label>
+                            <select id="profile-degree" class="form-select" required>
+                                <option value="B.Tech">B.Tech / B.E.</option>
+                                <option value="M.Tech">M.Tech / M.E.</option>
+                                <option value="BCA">BCA</option>
+                                <option value="MCA">MCA</option>
+                                <option value="B.Sc CS">B.Sc Computer Science</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-grad-year">Graduation Year <span class="required">*</span></label>
+                            <select id="profile-grad-year" class="form-select" required>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="profile-cgpa">Cumulative CGPA (0.00 - 10.00) <span class="required">*</span></label>
+                        <input type="number" id="profile-cgpa" class="form-control" step="0.01" min="0" max="10" required>
+                        <div class="form-hint">Used by companies for criteria-based eligibility filtering.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="profile-skills">Technical Skills</label>
+                        <input type="text" id="profile-skills" class="form-control" placeholder="Java, Spring Boot, MySQL, Git, React">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="profile-resume-url">Portfolio / GitHub / Profile URL</label>
+                        <input type="url" id="profile-resume-url" class="form-control" placeholder="https://github.com/yourprofile">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="profile-bio">Bio &amp; Academic Focus</label>
+                        <textarea id="profile-bio" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="btn-save-profile">
+                        Save Profile Changes
+                    </button>
+                </form>
+            </div>
+
+            <!-- Resume Upload Section -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="card" style="border-top: 4px solid var(--primary-600);">
+                    <div class="card-header">
+                        <h2 class="card-title" style="font-size: 1.15rem;">Resume Document</h2>
+                    </div>
+
+                    <div id="resume-status-box" style="margin-bottom: 1.25rem;">
+                        <div style="color: var(--surface-500); font-size: 0.9rem;">Checking resume status...</div>
+                    </div>
+
+                    <form id="resume-upload-form">
+                        <div class="form-group">
+                            <label class="form-label" for="resume-file-input">Select PDF File (Max 5MB)</label>
+                            <input type="file" id="resume-file-input" class="form-control" accept="application/pdf" required>
+                            <div class="form-hint">Only official PDF files accepted. File is verified on upload.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-outline" style="width: 100%;" id="btn-upload-resume">
+                            Upload PDF Resume
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card" style="background: var(--primary-50); border-color: var(--primary-200);">
+                    <h3 style="font-size: 1rem; color: var(--primary-800); margin-bottom: 0.5rem;">💡 Placement Tips</h3>
+                    <ul style="font-size: 0.85rem; color: var(--primary-900); padding-left: 1.25rem; line-height: 1.6;">
+                        <li>Ensure CGPA matches your latest official grade sheet.</li>
+                        <li>Include comma-separated skills to match recruiter searches.</li>
+                        <li>Update graduation year according to your degree completion.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Logged in as Student</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        let currentProfileData = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_STUDENT']);
+            if (!user) return;
+            SkillMatch.initNavbar('profile');
+
+            loadProfile();
+
+            // Profile save handler
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('btn-save-profile');
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+
+                const payload = {
+                    fullName: document.getElementById('profile-name').value,
+                    phone: document.getElementById('profile-phone').value,
+                    department: document.getElementById('profile-dept').value,
+                    degree: document.getElementById('profile-degree').value,
+                    graduationYear: parseInt(document.getElementById('profile-grad-year').value, 10),
+                    cgpa: parseFloat(document.getElementById('profile-cgpa').value),
+                    skills: document.getElementById('profile-skills').value,
+                    resumeUrl: document.getElementById('profile-resume-url').value,
+                    bio: document.getElementById('profile-bio').value
+                };
+
+                try {
+                    const res = await SkillMatch.apiRequest('/api/students/me', {
+                        method: 'PUT',
+                        body: JSON.stringify(payload)
+                    });
+                    if (res && res.success) {
+                        SkillMatch.showToast('Profile updated successfully!', 'success');
+                        currentProfileData = res.data;
+                        renderProfile(res.data);
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Failed to update profile.', 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Profile Changes';
+                }
+            });
+
+            // Resume upload handler
+            document.getElementById('resume-upload-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fileInput = document.getElementById('resume-file-input');
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    SkillMatch.showToast('Please select a PDF file first.', 'error');
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                if (file.size > 5 * 1024 * 1024) {
+                    SkillMatch.showToast('File exceeds 5MB size limit.', 'error');
+                    return;
+                }
+
+                const uploadBtn = document.getElementById('btn-upload-resume');
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'Uploading...';
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const res = await SkillMatch.apiRequest('/api/students/me/resume', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (res && res.success) {
+                        SkillMatch.showToast('Resume uploaded and verified successfully!', 'success');
+                        fileInput.value = '';
+                        loadProfile();
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Failed to upload resume.', 'error');
+                } finally {
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'Upload PDF Resume';
+                }
+            });
+        });
+
+        async function loadProfile() {
+            try {
+                const res = await SkillMatch.apiRequest('/api/students/me');
+                if (res && res.data) {
+                    currentProfileData = res.data;
+                    renderProfile(res.data);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function renderProfile(p) {
+            document.getElementById('profile-name').value = p.fullName || '';
+            document.getElementById('profile-email').value = p.email || '';
+            document.getElementById('profile-phone').value = p.phone || '';
+            if (p.department) document.getElementById('profile-dept').value = p.department;
+            if (p.degree) document.getElementById('profile-degree').value = p.degree;
+            if (p.graduationYear) document.getElementById('profile-grad-year').value = p.graduationYear;
+            document.getElementById('profile-cgpa').value = p.cgpa !== null && p.cgpa !== undefined ? p.cgpa : '';
+            document.getElementById('profile-skills').value = p.skills || '';
+            document.getElementById('profile-resume-url').value = p.resumeUrl || '';
+            document.getElementById('profile-bio').value = p.bio || '';
+
+            // Render resume card status
+            const resumeBox = document.getElementById('resume-status-box');
+            if (p.hasResume && p.resumeFileName) {
+                resumeBox.innerHTML = `
+                    <div style="background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-md); padding:0.85rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+                        <div style="font-size:0.88rem; font-weight:600; color:var(--success-text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            📄 ${SkillMatch.escapeHtml(p.resumeOriginalName || 'Resume.pdf')}
+                        </div>
+                        <a href="/api/resumes/${p.resumeFileName}" target="_blank" class="btn btn-sm btn-primary" style="flex-shrink:0;">
+                            View PDF
+                        </a>
+                    </div>
+                `;
+            } else {
+                resumeBox.innerHTML = `
+                    <div style="background:var(--warning-bg); border:1px solid var(--warning-border); border-radius:var(--radius-md); padding:0.85rem; font-size:0.88rem; color:var(--warning-text);">
+                        ⚠️ No PDF resume uploaded yet. Companies may require an uploaded resume to shortlist you.
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

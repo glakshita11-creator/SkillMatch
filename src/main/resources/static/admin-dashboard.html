@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Dashboard — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper">
+        <!-- Admin Welcome Banner -->
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, var(--surface-0) 0%, #fef2f2 100%); border-left: 6px solid #dc2626;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="font-size: 2rem; margin-bottom: 0.35rem;">Placement Administration Console</h1>
+                    <p style="color: var(--surface-500); font-size: 0.95rem;">Institution-wide oversight of candidates, company listings, verification, and placement outcomes.</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="/admin-users.html" class="btn btn-outline">Manage Accounts</a>
+                    <a href="/admin-opportunities.html" class="btn btn-primary">Audit Opportunities</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Institutional Metrics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple">👨‍🎓</div>
+                <div>
+                    <div class="stat-value" id="admin-stat-students">0</div>
+                    <div class="stat-label">Enrolled Students</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">🏢</div>
+                <div>
+                    <div class="stat-value" id="admin-stat-companies">0</div>
+                    <div class="stat-label">Recruiting Partners</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon amber">💼</div>
+                <div>
+                    <div class="stat-value" id="admin-stat-opps">0</div>
+                    <div class="stat-label">Total Opportunities</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">📈</div>
+                <div>
+                    <div class="stat-value" id="admin-stat-rate">0%</div>
+                    <div class="stat-label">Placement Offer Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Application Pipeline Statuses -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">Placement Pipeline Status Distribution</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; text-align: center;">
+                <div style="background: #dbeafe; padding: 1.25rem; border-radius: var(--radius-md);">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #1d4ed8;" id="status-applied-count">0</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #1e40af;">Applied</div>
+                </div>
+                <div style="background: #fef3c7; padding: 1.25rem; border-radius: var(--radius-md);">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #b45309;" id="status-review-count">0</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #92400e;">Under Review</div>
+                </div>
+                <div style="background: #ede9fe; padding: 1.25rem; border-radius: var(--radius-md);">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #6d28d9;" id="status-shortlist-count">0</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #581c87;">Shortlisted</div>
+                </div>
+                <div style="background: #e0e7ff; padding: 1.25rem; border-radius: var(--radius-md);">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #4338ca;" id="status-interview-count">0</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #3730a3;">Interviews</div>
+                </div>
+                <div style="background: #d1fae5; padding: 1.25rem; border-radius: var(--radius-md);">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #047857;" id="status-selected-count">0</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #065f46;">Selected / Offers</div>
+                </div>
+                <div style="background: #fee2e2; padding: 1.25rem; border-radius: var(--radius-md);">
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #b91c1c;" id="status-rejected-count">0</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #991b1b;">Rejected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Administration Navigation Cards -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="card" style="border-left: 4px solid var(--primary-600);">
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Account &amp; Security Controls</h3>
+                <p style="color: var(--surface-500); font-size: 0.9rem; margin-bottom: 1.25rem;">
+                    Manage student registrations, activate or deactivate accounts, and onboard verified corporate recruiters.
+                </p>
+                <a href="/admin-users.html" class="btn btn-outline btn-sm">Manage Users &amp; Companies →</a>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #3b82f6;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Opportunity Quality Oversight</h3>
+                <p style="color: var(--surface-500); font-size: 0.9rem; margin-bottom: 1.25rem;">
+                    Audit corporate opportunities across all departments, adjust criteria, close or remove outdated postings.
+                </p>
+                <a href="/admin-opportunities.html" class="btn btn-outline btn-sm">Audit Opportunities →</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom">
+                <div>&copy; 2026 SkillMatch — Placement and Internship Management System.</div>
+                <div>Institution Administration Portal</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await SkillMatch.requireAuth(['ROLE_ADMIN']);
+            if (!user) return;
+            SkillMatch.initNavbar('dashboard');
+
+            try {
+                const res = await SkillMatch.apiRequest('/api/admin/dashboard');
+                if (res && res.data) {
+                    const s = res.data;
+                    document.getElementById('admin-stat-students').textContent = s.totalStudents;
+                    document.getElementById('admin-stat-companies').textContent = s.totalCompanies;
+                    document.getElementById('admin-stat-opps').textContent = s.totalOpportunities;
+                    document.getElementById('admin-stat-rate').textContent = `${s.placementRate}%`;
+
+                    if (s.applicationsByStatus) {
+                        const m = s.applicationsByStatus;
+                        document.getElementById('status-applied-count').textContent = m['APPLIED'] || 0;
+                        document.getElementById('status-review-count').textContent = m['UNDER_REVIEW'] || 0;
+                        document.getElementById('status-shortlist-count').textContent = m['SHORTLISTED'] || 0;
+                        document.getElementById('status-interview-count').textContent = m['INTERVIEW_SCHEDULED'] || 0;
+                        document.getElementById('status-selected-count').textContent = m['SELECTED'] || 0;
+                        document.getElementById('status-rejected-count').textContent = m['REJECTED'] || 0;
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>

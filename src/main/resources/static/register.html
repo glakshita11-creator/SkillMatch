@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration — SkillMatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body style="background: linear-gradient(135deg, var(--surface-50) 0%, var(--primary-50) 100%);">
+    <header class="navbar" id="main-navbar"></header>
+
+    <main class="page-wrapper" style="max-width: 800px; margin: 2rem auto;">
+        <div class="card" style="padding: 2.5rem; box-shadow: var(--shadow-xl);">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div class="brand-icon" style="margin: 0 auto 1rem; width: 44px; height: 44px; font-size: 1.5rem;">🎓</div>
+                <h1 style="font-size: 1.85rem; margin-bottom: 0.5rem;">Student Account Registration</h1>
+                <p style="color: var(--surface-500); font-size: 0.95rem;">Join SkillMatch to apply for campus placements and verified internships</p>
+            </div>
+
+            <div id="register-error" style="display: none; padding: 0.85rem; margin-bottom: 1.5rem; border-radius: var(--radius-md); background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); font-size: 0.9rem;"></div>
+
+            <form id="register-form">
+                <h3 style="font-size: 1.1rem; color: var(--primary-800); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--surface-200);">
+                    1. Account Credentials &amp; Contact
+                </h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="reg-name" class="form-control" placeholder="e.g. Rahul Verma" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="reg-email" class="form-control" placeholder="rahul@student.edu" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-password">Password (min 6 chars) <span class="required">*</span></label>
+                        <input type="password" id="reg-password" class="form-control" placeholder="••••••••" minlength="6" required autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-phone">Phone Number</label>
+                        <input type="tel" id="reg-phone" class="form-control" placeholder="+91 9876543210">
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.1rem; color: var(--primary-800); margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--surface-200);">
+                    2. Academic &amp; Placement Profile
+                </h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-dept">Department <span class="required">*</span></label>
+                        <select id="reg-dept" class="form-select" required>
+                            <option value="">Select Department</option>
+                            <option value="Computer Science">Computer Science &amp; Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics & Communication">Electronics &amp; Communication</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Data Science & AI">Data Science &amp; AI</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-degree">Degree <span class="required">*</span></label>
+                        <select id="reg-degree" class="form-select" required>
+                            <option value="B.Tech">B.Tech / B.E.</option>
+                            <option value="M.Tech">M.Tech / M.E.</option>
+                            <option value="BCA">BCA</option>
+                            <option value="MCA">MCA</option>
+                            <option value="B.Sc CS">B.Sc Computer Science</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-grad-year">Graduation Year <span class="required">*</span></label>
+                        <select id="reg-grad-year" class="form-select" required>
+                            <option value="">Select Year</option>
+                            <option value="2024">2024</option>
+                            <option value="2025" selected>2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-cgpa">Cumulative CGPA (0.0 - 10.0) <span class="required">*</span></label>
+                        <input type="number" id="reg-cgpa" class="form-control" step="0.01" min="0" max="10" placeholder="e.g. 8.45" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="reg-skills">Technical Skills (Comma separated)</label>
+                    <input type="text" id="reg-skills" class="form-control" placeholder="e.g. Java, Python, Spring Boot, React, SQL, Git">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="reg-resume-url">Portfolio / LinkedIn / GitHub URL</label>
+                    <input type="url" id="reg-resume-url" class="form-control" placeholder="https://github.com/yourhandle">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="reg-bio">Short Bio / Career Summary</label>
+                    <textarea id="reg-bio" class="form-control" rows="2" placeholder="Brief summary of your academic interests and career goals..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;" id="btn-submit-reg">
+                    Complete Registration
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.92rem; color: var(--surface-500);">
+                Already have an account? <a href="/login.html" style="font-weight: 700;">Sign in here</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            SkillMatch.initNavbar('');
+
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errorBox = document.getElementById('register-error');
+                const submitBtn = document.getElementById('btn-submit-reg');
+
+                errorBox.style.display = 'none';
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Registering account...';
+
+                const payload = {
+                    fullName: document.getElementById('reg-name').value,
+                    email: document.getElementById('reg-email').value,
+                    password: document.getElementById('reg-password').value,
+                    phone: document.getElementById('reg-phone').value,
+                    department: document.getElementById('reg-dept').value,
+                    degree: document.getElementById('reg-degree').value,
+                    graduationYear: parseInt(document.getElementById('reg-grad-year').value, 10),
+                    cgpa: parseFloat(document.getElementById('reg-cgpa').value),
+                    skills: document.getElementById('reg-skills').value,
+                    resumeUrl: document.getElementById('reg-resume-url').value,
+                    bio: document.getElementById('reg-bio').value
+                };
+
+                try {
+                    const res = await SkillMatch.apiRequest('/api/auth/register/student', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res && res.success) {
+                        SkillMatch.showToast('Registration successful! Please log in.', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/login.html?registered=true';
+                        }, 1200);
+                    }
+                } catch (err) {
+                    errorBox.textContent = err.message || 'Registration failed. Please try again.';
+                    errorBox.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Complete Registration';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
