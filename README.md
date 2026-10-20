@@ -254,13 +254,15 @@ The automated test suite verifies all required test cases:
 
 | Test Class | Test Scenarios Verified | Status |
 |---|---|---|
-| `StudentRegistrationAndAuthTest` | 1. Student registration with password hashing<br>2. Login with valid/invalid credentials<br>3. Unauthorized endpoint access protection<br>4. Role-based endpoint boundaries | **PASSED** (4 tests) |
-| `StudentProfileAndResumeTest` | 5. Student profile retrieval and updates<br>14. Resume upload validation (PDF magic bytes `%PDF`) and access control | **PASSED** (2 tests) |
-| `OpportunityManagementAndSearchTest` | 6. Opportunity creation & company ownership isolation<br>7. Public search, filtering, and sorting | **PASSED** (2 tests) |
-| `EligibilityAndApplicationWorkflowTest` | 8. Backend eligibility evaluation engine<br>9. Application submission<br>10. Duplicate application rejection (409 Conflict)<br>11. Application deadline enforcement<br>12. Application status transitions<br>13. Unauthorized applicant access prevention | **PASSED** (4 tests) |
-| `AdminManagementIntegrationTest` | 15. Administrator dashboard, user status toggle, and company onboarding | **PASSED** (1 test) |
+| `StudentRegistrationAndAuthTest` | 1. Student registration with password hashing<br>2. Login with valid/invalid credentials<br>3. Unauthorized endpoint access protection<br>4. Role-based endpoint boundaries<br>5. Password change validation & BCrypt updating | **PASSED** (5 tests) |
+| `StudentProfileAndResumeTest` | 6. Student profile retrieval and updates<br>7. Resume upload validation (PDF magic bytes `%PDF`) and access control | **PASSED** (2 tests) |
+| `OpportunityManagementAndSearchTest` | 8. Opportunity creation & company ownership isolation<br>9. Public search, filtering, and sorting | **PASSED** (2 tests) |
+| `EligibilityAndApplicationWorkflowTest` | 10. Backend eligibility evaluation engine<br>11. Application submission<br>12. Duplicate application rejection (409 Conflict)<br>13. Application deadline enforcement<br>14. Application status transitions<br>15. Unauthorized applicant access prevention | **PASSED** (4 tests) |
+| `AdminManagementIntegrationTest` | 16. Administrator dashboard, user status toggle, and company onboarding | **PASSED** (1 test) |
+| `CsvExportIntegrationTest` | 17. RFC-4180 CSV generation & escaping<br>18. Recruiter & Admin CSV downloads & role authorization | **PASSED** (4 tests) |
 
-**Total:** 13 test methods, 15 scenarios, **0 Failures, 0 Errors**.
+**Total:** 18 test methods across 6 test classes, **0 Failures, 0 Errors**.
+
 
 ---
 
@@ -271,6 +273,7 @@ The automated test suite verifies all required test cases:
 - `POST /api/auth/login`: Authenticate and start session.
 - `POST /api/auth/logout`: Invalidate session.
 - `GET /api/auth/me`: Retrieve current logged-in user details.
+- `PUT /api/auth/change-password`: Change password with verification of existing password.
 - `GET /api/auth/csrf`: Retrieve active CSRF token.
 
 ### Student Endpoints (`ROLE_STUDENT`)
@@ -303,6 +306,8 @@ The automated test suite verifies all required test cases:
 - `GET /api/companies/me/opportunities`: List company-owned opportunities.
 - `GET /api/companies/me/opportunities/{id}/applicants`: List applicants for opportunity.
 - `GET /api/companies/me/applicants`: All applicants for this company.
+- `GET /api/companies/me/applicants/export-csv`: Export applicant pipeline to RFC-4180 CSV.
+- `GET /api/companies/me/opportunities/{id}/export-csv`: Export applicants for a specific opening to CSV.
 - `GET /api/companies/me/dashboard`: Recruiter metric cards.
 
 ### Administrator Endpoints (`ROLE_ADMIN`)
@@ -312,6 +317,7 @@ The automated test suite verifies all required test cases:
 - `POST /api/admin/companies`: Onboard approved corporate recruiter.
 - `GET /api/admin/opportunities`: Audit all institutional opportunities.
 - `GET /api/admin/applications`: Audit all campus applications.
+- `GET /api/admin/applications/export-csv`: Export institution-wide placement applications to CSV.
 
 ### Resume Access
 - `GET /api/resumes/{filename}`: Stream PDF resume. Strict authorization: accessible only by the student owner, recruiters reviewing an application from that student, or system administrators.
