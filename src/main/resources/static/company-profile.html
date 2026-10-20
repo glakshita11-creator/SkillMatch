@@ -64,6 +64,30 @@
                 </div>
             </form>
         </div>
+
+        <!-- Account Security Card -->
+        <div class="card" style="box-shadow: var(--shadow-md); margin-top: 2rem; border-top: 4px solid var(--surface-600);">
+            <div class="card-header">
+                <h2 class="card-title" style="font-size: 1.2rem;">Account Security &amp; Password</h2>
+            </div>
+            <form id="company-password-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="comp-curr-password">Current Password <span class="required">*</span></label>
+                        <input type="password" id="comp-curr-password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="comp-new-password">New Password <span class="required">*</span></label>
+                        <input type="password" id="comp-new-password" class="form-control" minlength="6" placeholder="Min 6 characters" required>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn btn-outline" id="btn-change-comp-password">
+                        Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
     </main>
 
     <footer class="footer">
@@ -113,6 +137,33 @@
                 } finally {
                     btn.disabled = false;
                     btn.textContent = 'Save Company Profile';
+                }
+            });
+
+            // Password change handler
+            document.getElementById('company-password-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const currPassword = document.getElementById('comp-curr-password').value;
+                const newPassword = document.getElementById('comp-new-password').value;
+                const pBtn = document.getElementById('btn-change-comp-password');
+
+                pBtn.disabled = true;
+                pBtn.textContent = 'Updating...';
+
+                try {
+                    const res = await SkillMatch.apiRequest('/api/auth/change-password', {
+                        method: 'PUT',
+                        body: JSON.stringify({ currentPassword: currPassword, newPassword: newPassword })
+                    });
+                    if (res && res.success) {
+                        SkillMatch.showToast('Password updated successfully!', 'success');
+                        document.getElementById('company-password-form').reset();
+                    }
+                } catch (err) {
+                    SkillMatch.showToast(err.message || 'Failed to update password.', 'error');
+                } finally {
+                    pBtn.disabled = false;
+                    pBtn.textContent = 'Update Password';
                 }
             });
         });

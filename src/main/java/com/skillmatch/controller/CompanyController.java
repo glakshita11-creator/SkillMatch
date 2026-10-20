@@ -74,4 +74,28 @@ public class CompanyController {
         CompanyDashboardStats stats = companyService.getDashboardStats(user.getId());
         return ResponseEntity.ok(ApiResponse.ok("Company dashboard stats retrieved.", stats));
     }
+
+    @GetMapping("/me/opportunities/{id}/export-csv")
+    public ResponseEntity<String> exportOpportunityApplicantsCsv(@PathVariable("id") Long id) {
+        User user = authService.getCurrentUser();
+        List<ApplicationResponse> applicants = applicationService.getOpportunityApplicants(user.getId(), id, false);
+        String csvContent = com.skillmatch.util.CsvExporter.exportApplicationsToCsv(applicants);
+
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"applicants_opp_" + id + ".csv\"")
+                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                .body(csvContent);
+    }
+
+    @GetMapping("/me/applicants/export-csv")
+    public ResponseEntity<String> exportAllApplicantsCsv() {
+        User user = authService.getCurrentUser();
+        List<ApplicationResponse> applicants = applicationService.getCompanyApplications(user.getId());
+        String csvContent = com.skillmatch.util.CsvExporter.exportApplicationsToCsv(applicants);
+
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"all_company_applicants.csv\"")
+                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                .body(csvContent);
+    }
 }

@@ -779,3 +779,150 @@ img {
         padding: 1.25rem 1rem;
     }
 }
+
+/* =============================================================================
+   Visual Application Progress Stepper
+   ============================================================================= */
+.stepper-container {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin: 2.5rem 0 2rem;
+    padding: 0 0.5rem;
+}
+
+.stepper-container::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 2rem;
+    right: 2rem;
+    height: 3px;
+    background: var(--surface-200);
+    z-index: 1;
+}
+
+.stepper-progress-line {
+    position: absolute;
+    top: 24px;
+    left: 2rem;
+    height: 3px;
+    background: var(--primary-600);
+    z-index: 2;
+    transition: width 0.4s ease;
+}
+
+.step-node {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 110px;
+}
+
+.step-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--surface-0);
+    border: 3px solid var(--surface-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--surface-400);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 0.75rem;
+}
+
+.step-node.completed .step-circle {
+    background: var(--success-main);
+    border-color: var(--success-main);
+    color: white;
+}
+
+.step-node.active .step-circle {
+    background: var(--primary-600);
+    border-color: var(--primary-200);
+    color: white;
+    box-shadow: 0 0 0 5px var(--primary-100);
+    animation: pulseCircle 2s infinite;
+}
+
+.step-node.rejected .step-circle {
+    background: var(--danger-main);
+    border-color: var(--danger-light);
+    color: white;
+    box-shadow: 0 0 0 5px #fee2e2;
+}
+
+.step-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--surface-600);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.step-node.completed .step-label {
+    color: var(--success-main);
+}
+
+.step-node.active .step-label {
+    color: var(--primary-700);
+    font-weight: 800;
+}
+
+.step-node.rejected .step-label {
+    color: var(--danger-main);
+}
+
+.step-subtext {
+    font-size: 0.75rem;
+    color: var(--surface-400);
+    margin-top: 0.2rem;
+}
+
+@keyframes pulseCircle {
+    0% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(124, 58, 237, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+}
+
+@media (max-width: 768px) {
+    .stepper-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding-left: 1.5rem;
+    }
+    .stepper-container::before {
+        top: 1rem;
+        bottom: 1rem;
+        left: 38px;
+        width: 3px;
+        height: auto;
+        right: auto;
+    }
+    .stepper-progress-line {
+        top: 1rem;
+        left: 38px;
+        width: 3px;
+        height: 0;
+        transition: height 0.4s ease;
+    }
+    .step-node {
+        flex-direction: row;
+        width: 100%;
+        text-align: left;
+        gap: 1rem;
+    }
+    .step-circle {
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+}
+

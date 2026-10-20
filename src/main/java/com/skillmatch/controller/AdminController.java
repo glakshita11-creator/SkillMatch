@@ -71,4 +71,15 @@ public class AdminController {
         List<ApplicationResponse> apps = adminService.getAllApplications();
         return ResponseEntity.ok(ApiResponse.ok("Applications retrieved.", apps));
     }
+
+    @GetMapping("/applications/export-csv")
+    public ResponseEntity<String> exportApplicationsCsv() {
+        List<ApplicationResponse> apps = adminService.getAllApplications();
+        String csvContent = com.skillmatch.util.CsvExporter.exportApplicationsToCsv(apps);
+
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"campus_placement_applications.csv\"")
+                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                .body(csvContent);
+    }
 }

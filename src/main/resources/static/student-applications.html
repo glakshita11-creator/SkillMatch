@@ -51,6 +51,76 @@
         </div>
     </main>
 
+    <!-- Visual Application Journey Stepper Modal -->
+    <div class="modal-overlay" id="journey-modal">
+        <div class="modal-content" style="max-width: 680px;">
+            <button class="modal-close" onclick="closeJourneyModal()">&times;</button>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+                <span style="font-size: 1.5rem;">🚀</span>
+                <h2 style="font-size: 1.4rem; margin: 0;" id="journey-opp-title">Opportunity</h2>
+            </div>
+            <p style="color: var(--surface-500); font-size: 0.9rem; margin-bottom: 1.5rem;" id="journey-company-meta">
+                Company • Applied Date
+            </p>
+
+            <!-- Visual Stepper -->
+            <div class="stepper-container" id="journey-stepper">
+                <div class="stepper-progress-line" id="journey-progress-line" style="width: 0%;"></div>
+                
+                <div class="step-node" id="step-node-applied">
+                    <div class="step-circle" id="step-circle-applied">1</div>
+                    <div class="step-label">Applied</div>
+                    <div class="step-subtext" id="step-sub-applied">Submitted</div>
+                </div>
+
+                <div class="step-node" id="step-node-review">
+                    <div class="step-circle" id="step-circle-review">2</div>
+                    <div class="step-label">Review</div>
+                    <div class="step-subtext" id="step-sub-review">Screening</div>
+                </div>
+
+                <div class="step-node" id="step-node-shortlist">
+                    <div class="step-circle" id="step-circle-shortlist">3</div>
+                    <div class="step-label">Shortlist</div>
+                    <div class="step-subtext" id="step-sub-shortlist">Qualified</div>
+                </div>
+
+                <div class="step-node" id="step-node-interview">
+                    <div class="step-circle" id="step-circle-interview">4</div>
+                    <div class="step-label">Interview</div>
+                    <div class="step-subtext" id="step-sub-interview">Scheduled</div>
+                </div>
+
+                <div class="step-node" id="step-node-outcome">
+                    <div class="step-circle" id="step-circle-outcome">5</div>
+                    <div class="step-label" id="step-label-outcome">Offer</div>
+                    <div class="step-subtext" id="step-sub-outcome">Placed</div>
+                </div>
+            </div>
+
+            <!-- Detailed Status Feedback Card -->
+            <div class="card" style="background: var(--surface-50); border: 1px solid var(--surface-200); padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <div style="font-weight: 700; color: var(--surface-800); font-size: 0.95rem;">Current Application Stage</div>
+                    <div id="journey-status-badge"></div>
+                </div>
+                <div id="journey-feedback-box" style="font-size: 0.9rem; color: var(--surface-700); line-height: 1.5;">
+                    No updates provided yet.
+                </div>
+                <div id="journey-interview-box" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #ede9fe; border-radius: var(--radius-sm); color: #5b21b6; font-size: 0.88rem; font-weight: 600;">
+                </div>
+                <div id="journey-withdrawn-box" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #fee2e2; border-radius: var(--radius-sm); color: #991b1b; font-size: 0.88rem; font-weight: 600;">
+                    ⚠️ You have withdrawn this application.
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a id="journey-opp-link" href="#" class="btn btn-outline btn-sm">View Job Posting</a>
+                <button class="btn btn-secondary btn-sm" onclick="closeJourneyModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-bottom">
@@ -147,7 +217,8 @@
                         <td>${SkillMatch.formatStatusBadge(a.status)}</td>
                         <td style="max-width:300px;">${recruiterFeedback}</td>
                         <td>
-                            <div style="display:flex; gap:0.5rem; align-items:center;">
+                            <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
+                                <button class="btn btn-primary btn-sm" onclick="openJourneyModal(${a.id})">Track Status</button>
                                 <a href="/opportunity-details.html?id=${a.opportunityId}" class="btn btn-outline btn-sm">Details</a>
                                 ${withdrawBtn}
                             </div>
@@ -176,6 +247,115 @@
                 }
             );
         }
+
+        function openJourneyModal(appId) {
+            const app = allApplications.find(a => a.id === appId);
+            if (!app) return;
+
+            document.getElementById('journey-opp-title').textContent = app.opportunityTitle;
+            document.getElementById('journey-company-meta').textContent = `${app.companyName} • Applied on ${SkillMatch.formatDate(app.appliedAt)}`;
+            document.getElementById('journey-opp-link').href = `/opportunity-details.html?id=${app.opportunityId}`;
+            document.getElementById('journey-status-badge').innerHTML = SkillMatch.formatStatusBadge(app.status);
+
+            const feedbackBox = document.getElementById('journey-feedback-box');
+            if (app.recruiterNotes) {
+                feedbackBox.innerHTML = `<strong>Recruiter Remarks:</strong> "${SkillMatch.escapeHtml(app.recruiterNotes)}"`;
+            } else {
+                feedbackBox.textContent = 'Application received and registered in the university recruitment database. Awaiting coordinator review.';
+            }
+
+            const interviewBox = document.getElementById('journey-interview-box');
+            if (app.interviewDate) {
+                interviewBox.style.display = 'block';
+                interviewBox.innerHTML = `📅 <strong>Interview Scheduled:</strong> ${SkillMatch.formatDate(app.interviewDate)}`;
+            } else {
+                interviewBox.style.display = 'none';
+            }
+
+            const withdrawnBox = document.getElementById('journey-withdrawn-box');
+            withdrawnBox.style.display = app.withdrawn ? 'block' : 'none';
+
+            // Configure Stepper states
+            const steps = [
+                { id: 'applied', node: document.getElementById('step-node-applied'), circle: document.getElementById('step-circle-applied') },
+                { id: 'review', node: document.getElementById('step-node-review'), circle: document.getElementById('step-circle-review') },
+                { id: 'shortlist', node: document.getElementById('step-node-shortlist'), circle: document.getElementById('step-circle-shortlist') },
+                { id: 'interview', node: document.getElementById('step-node-interview'), circle: document.getElementById('step-circle-interview') },
+                { id: 'outcome', node: document.getElementById('step-node-outcome'), circle: document.getElementById('step-circle-outcome') }
+            ];
+
+            // Reset all nodes
+            steps.forEach((s, idx) => {
+                s.node.className = 'step-node';
+                s.circle.textContent = (idx + 1).toString();
+            });
+            document.getElementById('step-label-outcome').textContent = 'Offer';
+            document.getElementById('step-sub-outcome').textContent = 'Placed';
+
+            const line = document.getElementById('journey-progress-line');
+
+            switch (app.status) {
+                case 'APPLIED':
+                    steps[0].node.classList.add('active');
+                    line.style.width = '0%';
+                    break;
+                case 'UNDER_REVIEW':
+                    steps[0].node.classList.add('completed');
+                    steps[0].circle.textContent = '✓';
+                    steps[1].node.classList.add('active');
+                    line.style.width = '25%';
+                    break;
+                case 'SHORTLISTED':
+                    steps[0].node.classList.add('completed');
+                    steps[0].circle.textContent = '✓';
+                    steps[1].node.classList.add('completed');
+                    steps[1].circle.textContent = '✓';
+                    steps[2].node.classList.add('active');
+                    line.style.width = '50%';
+                    break;
+                case 'INTERVIEW_SCHEDULED':
+                    steps[0].node.classList.add('completed');
+                    steps[0].circle.textContent = '✓';
+                    steps[1].node.classList.add('completed');
+                    steps[1].circle.textContent = '✓';
+                    steps[2].node.classList.add('completed');
+                    steps[2].circle.textContent = '✓';
+                    steps[3].node.classList.add('active');
+                    line.style.width = '75%';
+                    break;
+                case 'SELECTED':
+                    steps[0].node.classList.add('completed');
+                    steps[0].circle.textContent = '✓';
+                    steps[1].node.classList.add('completed');
+                    steps[1].circle.textContent = '✓';
+                    steps[2].node.classList.add('completed');
+                    steps[2].circle.textContent = '✓';
+                    steps[3].node.classList.add('completed');
+                    steps[3].circle.textContent = '✓';
+                    steps[4].node.classList.add('completed');
+                    steps[4].circle.textContent = '★';
+                    document.getElementById('step-label-outcome').textContent = 'Selected';
+                    document.getElementById('step-sub-outcome').textContent = 'Offer Extended!';
+                    line.style.width = '100%';
+                    break;
+                case 'REJECTED':
+                    steps[0].node.classList.add('completed');
+                    steps[0].circle.textContent = '✓';
+                    steps[4].node.classList.add('rejected');
+                    steps[4].circle.textContent = '✕';
+                    document.getElementById('step-label-outcome').textContent = 'Declined';
+                    document.getElementById('step-sub-outcome').textContent = 'Not Selected';
+                    line.style.width = '100%';
+                    break;
+            }
+
+            document.getElementById('journey-modal').classList.add('active');
+        }
+
+        function closeJourneyModal() {
+            document.getElementById('journey-modal').classList.remove('active');
+        }
     </script>
 </body>
 </html>
+

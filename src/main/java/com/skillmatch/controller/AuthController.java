@@ -2,6 +2,7 @@ package com.skillmatch.controller;
 
 import com.skillmatch.dto.ApiResponse;
 import com.skillmatch.dto.AuthRequest;
+import com.skillmatch.dto.ChangePasswordRequest;
 import com.skillmatch.dto.StudentRegisterRequest;
 import com.skillmatch.dto.UserResponse;
 import com.skillmatch.service.AuthService;
@@ -103,4 +104,11 @@ public class AuthController {
         }
         return ResponseEntity.ok(Map.of("message", "CSRF token generated"));
     }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok(ApiResponse.ok("Password changed successfully."));
+    }
 }
+

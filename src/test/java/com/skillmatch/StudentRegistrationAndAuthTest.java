@@ -2,6 +2,7 @@ package com.skillmatch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skillmatch.dto.AuthRequest;
+import com.skillmatch.dto.ChangePasswordRequest;
 import com.skillmatch.dto.StudentRegisterRequest;
 import com.skillmatch.entity.User;
 import com.skillmatch.enums.Role;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -119,4 +121,33 @@ class StudentRegistrationAndAuthTest {
         mockMvc.perform(get("/api/admin/dashboard"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @DisplayName("5. Password change validates current password and updates hash")
+    @WithMockUser(username = "arun.kumar@student.edu", roles = {"STUDENT"})
+    void testChangePassword() throws Exception {
+        // Incorrect current password fails
+        ChangePasswordRequest wrongReq = new ChangePasswordRequest("WrongPass@123", "BrandNewPass@123");
+        mockMvc.perform(put("/api/auth/change-password")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(wrongReq)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Current password does not match."));
+
+
+        // Correct current password succeeds
+        ChangePasswordRequest correctReq = new ChangePasswordRequest("Password@123", "BrandNewPass@123");
+        mockMvc.perform(put("/api/auth/change-password")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(correctReq)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        User updatedUser = userRepository.findByEmail("arun.kumar@student.edu").orElseThrow();
+        assertThat(passwordEncoder.matches("BrandNewPass@123", updatedUser.getPassword())).isTrue();
+    }
 }
+

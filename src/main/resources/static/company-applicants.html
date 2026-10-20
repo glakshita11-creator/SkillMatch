@@ -16,7 +16,12 @@
                 <h1 style="font-size: 2.2rem; margin-bottom: 0.35rem;">Candidate Applicant Pipeline</h1>
                 <p style="color: var(--surface-500);">Review candidate qualifications, view resumes, coordinate interviews, and extend placement offers.</p>
             </div>
-            <a href="/company-dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <button class="btn btn-outline" id="btn-export-csv" onclick="exportCsv()" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                    📥 Export to CSV
+                </button>
+                <a href="/company-dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
+            </div>
         </div>
 
         <!-- Filter Controls Card -->
@@ -378,6 +383,16 @@
 
         function closeProfileModal() {
             document.getElementById('profile-view-modal').classList.remove('active');
+        }
+
+        function exportCsv() {
+            const oppSelect = document.getElementById('filter-opp-select');
+            const selectedOppId = oppSelect ? oppSelect.value : '';
+            let url = '/api/companies/me/applicants/export-csv';
+            if (selectedOppId) {
+                url = `/api/companies/me/opportunities/${selectedOppId}/export-csv`;
+            }
+            window.location.href = url;
         }
     </script>
 </body>
