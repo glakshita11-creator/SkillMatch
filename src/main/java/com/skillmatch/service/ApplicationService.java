@@ -136,7 +136,7 @@ public class ApplicationService {
             // Verify status transition
             ApplicationStatus current = app.getStatus();
             List<ApplicationStatus> allowed = ApplicationStatus.getAllowedNextStatuses(current);
-            if (!allowed.contains(request.getStatus())) {
+            if (!current.equals(request.getStatus()) && !allowed.contains(request.getStatus())) {
                 throw new BadRequestException("Invalid status transition from " + current.getDisplayName() + " to " + request.getStatus().getDisplayName() + ".");
             }
         }

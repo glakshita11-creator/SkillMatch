@@ -33,3 +33,4 @@ uploads/resumes/*
 !uploads/resumes/.gitkeep
 data/
 *.log
+*.exe
